@@ -5,7 +5,7 @@ result = subprocess.run([
     "-f", "interface/stlink.cfg",
     "-f", "target/stm32f1x.cfg",
     "-c",
-    "program build/Debug/stm32_linux_template.elf verify reset exit"
+    "program build/Debug/1-1_InitSystemClock.elf verify reset exit"
 ])
 
 if result.returncode == 0:

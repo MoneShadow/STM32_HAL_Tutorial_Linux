@@ -2,7 +2,7 @@ import subprocess
 
 result = subprocess.run([
     "gdb-multiarch",
-    "build/Debug/stm32_linux_template.elf"
+    "build/Debug/1-1_InitSystemClock.elf"
 ])
 
 if result == 0:

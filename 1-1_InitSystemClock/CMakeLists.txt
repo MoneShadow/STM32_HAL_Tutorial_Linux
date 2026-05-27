@@ -14,7 +14,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # 设置项目名称
-set(CMAKE_PROJECT_NAME stm32_linux_template)
+set(CMAKE_PROJECT_NAME 1-1_InitSystemClock)
 
 # 开启生成 compile_command 供语法检查用
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
