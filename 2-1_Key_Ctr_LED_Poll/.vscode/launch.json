@@ -12,7 +12,7 @@
             "servertype": "openocd",
             "device": "STM32F103C8",
             "svdFile": "${workspaceFolder}/STM32F103.svd",
-            "executable": "${workspaceFolder}/build/Debug/1-1_InitSystemClock.elf",
+            "executable": "${workspaceFolder}/build/Debug/2-1_Key_Ctr_LED_Poll.elf",
             "gdbPath": "arm-none-eabi-gdb",
             "configFiles": [
                 "interface/stlink.cfg",
