@@ -3,11 +3,11 @@
 
 void RCC_InitClock(void) {
     RCC_OscInitTypeDef RCC_OscInitStructure = {0};
-    RCC_OscInitStructure.HSIState = RCC_HSI_ON;
-    RCC_OscInitStructure.HSICalibrationValue = 1;
-    RCC_OscInitStructure.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-    RCC_OscInitStructure.PLL.PLLMUL = RCC_PLL_MUL16;
-    RCC_OscInitStructure.PLL.PLLSource = RCC_PLLSOURCE_HSI_DIV2;
+    RCC_OscInitStructure.HSEState = RCC_HSE_ON;
+    RCC_OscInitStructure.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+    RCC_OscInitStructure.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+    RCC_OscInitStructure.PLL.PLLMUL = RCC_PLL_MUL9;
+    RCC_OscInitStructure.PLL.PLLSource = RCC_PLLSOURCE_HSE;
     RCC_OscInitStructure.PLL.PLLState = RCC_PLL_ON;
     HAL_RCC_OscConfig(&RCC_OscInitStructure);
 
