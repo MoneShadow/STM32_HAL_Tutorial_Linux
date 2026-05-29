@@ -7,9 +7,9 @@ int main(void) {
     HAL_Init();
     RCC_InitClock();
     LED_Init();
-    Key_Init_IT(Down);
+    Key_Init_IT(Up);
 
     while (1) {
-        
+
     }
 }
