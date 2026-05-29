@@ -10,7 +10,7 @@ int main(void) {
     Key_Init();
 
     while (1) {
-        if (Key_Val(Up)) {
+        if (Key_Val(Up, 0xFF, 0xFFFFF)) {
             HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_1);
         }
     }

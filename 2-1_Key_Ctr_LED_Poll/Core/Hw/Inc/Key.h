@@ -10,6 +10,6 @@ typedef enum {
 } Key_Mode;
 
 void Key_Init(void);
-uint8_t Key_Val(Key_Mode Mode);
+uint8_t Key_Val(Key_Mode Mode, uint32_t Pdelay, uint32_t Rdelay);
 
 #endif

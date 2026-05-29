@@ -19,9 +19,9 @@ void Key_Init(void) {
     HAL_GPIO_Init(GPIOB, &GPIOB_InitStructure);
 }
 
-uint8_t Key_Val(Key_Mode Mode) {
+uint8_t Key_Val(Key_Mode Mode, uint32_t Pdelay, uint32_t Rdelay) {
     if (!Key1_Val && (sta == raise)) {
-        for (uint32_t i = 0xFFFFF; i > 1; i--) {
+        for (uint32_t i = Pdelay; i > 1; i--) {
             if (Key1_Val) {
                 return 0;
             }
@@ -33,6 +33,11 @@ uint8_t Key_Val(Key_Mode Mode) {
     }
     if (Key1_Val && (sta == press)) {
         sta = raise;
+        for (uint32_t i = Rdelay; i > 1; i--) {
+            if (!Key1_Val) {
+                return 0;
+            }
+        }
         if (Mode == Up) {
             return 1;
         }
