@@ -24,6 +24,14 @@
                 "Build",
                 "Flash"
             ]
+        },
+        {
+            "label": "Cls-Build",
+            "type": "shell",
+            "command": "python3",
+            "args": [
+                ".scripts/cls-build.py"
+            ]
         }
     ]
 }
