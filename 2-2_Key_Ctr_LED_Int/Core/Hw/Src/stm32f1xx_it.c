@@ -148,22 +148,11 @@ void SysTick_Handler(void)
 /*  file (startup_stm32f1xx.s).                                               */
 /******************************************************************************/
 
-/**
-  * @brief  This function handles PPP interrupt request.
-  * @param  None
-  * @retval None
-  */
-/*void PPP_IRQHandler(void)
-{
-}*/
+void EXTI1_IRQHandler(void) {
+	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
+}
 
-
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */
-
+void EXTI15_10_IRQHandler(void) {
+	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
+}
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

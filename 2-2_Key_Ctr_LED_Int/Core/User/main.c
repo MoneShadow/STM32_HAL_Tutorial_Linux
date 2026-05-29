@@ -7,11 +7,9 @@ int main(void) {
     HAL_Init();
     RCC_InitClock();
     LED_Init();
-    Key_Init();
+    Key_Init_IT(Down);
 
     while (1) {
-        if (Key_Val(Up, 0xFF, 0xFFFFF)) {
-            HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_1);
-        }
+        
     }
 }

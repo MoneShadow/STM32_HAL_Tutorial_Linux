@@ -2,7 +2,7 @@
 #define __KEY_H
 
 #define Key1_Val HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)
-#define Key2_Val HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11)
+#define Key11_Val HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11)
 
 typedef enum {
     Down = 1,
@@ -11,5 +11,6 @@ typedef enum {
 
 void Key_Init(void);
 uint8_t Key_Val(Key_Mode Mode, uint32_t Pdelay, uint32_t Rdelay);
+void Key_Init_IT(Key_Mode Mode);
 
 #endif
