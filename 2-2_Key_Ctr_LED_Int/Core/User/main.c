@@ -10,6 +10,7 @@ int main(void) {
     Key_Init_IT(Up);
 
     while (1) {
-
+        HAL_Delay(1000);
+        __HAL_GPIO_EXTI_GENERATE_SWIT(GPIO_PIN_11);
     }
 }
