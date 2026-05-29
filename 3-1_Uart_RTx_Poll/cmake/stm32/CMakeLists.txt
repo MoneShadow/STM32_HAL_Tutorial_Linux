@@ -32,6 +32,7 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Sys/Src/rcc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/LED.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/Key.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/uart.c
 )
 
 # 设置HAL库源文件/CMSIS源文件变量
