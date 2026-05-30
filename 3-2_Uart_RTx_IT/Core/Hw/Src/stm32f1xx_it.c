@@ -22,7 +22,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_it.h"
-   
+#include "uart.h"   
+
 /** @addtogroup STM32F1xx_HAL_Examples
   * @{
   */
@@ -154,5 +155,14 @@ void EXTI1_IRQHandler(void) {
 
 void EXTI15_10_IRQHandler(void) {
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
+}
+
+void USART1_IRQHandler(void) {
+	HAL_UART_IRQHandler(&uart1);
+  	if (__HAL_UART_GET_FLAG(&uart1, UART_FLAG_IDLE)) {
+		__HAL_UART_CLEAR_IDLEFLAG(&uart1);
+		hcd1.RXCounter += (RX_Data_MAX - uart1.RxXferCount);
+		HAL_UART_AbortReceive_IT(&uart1);
+	}
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
