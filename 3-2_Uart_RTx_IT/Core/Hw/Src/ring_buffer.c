@@ -23,15 +23,15 @@ uint8_t R_WriteByte(ring_buffer *rb, uint8_t Byte) {
 }
 
 /* 读取一个字节 */
-uint8_t R_ReadByte(ring_buffer *rb) {
+uint8_t R_ReadByte(ring_buffer *rb, uint8_t *Byte) {
     /* 先检查是否有数据 */
     if (rb->head == rb->tail) {
         return 1; // 缓冲区中无数据
     }
     /* 有数据的话就读取一个字节 */
-    uint8_t Byte = rb->buffer[rb->tail];
+    *Byte = rb->buffer[rb->tail];
     rb->tail = NEXT_IDX(rb->tail, rb);
-    return Byte; // 读取成功
+    return 0; // 读取成功
 }
 
 /* 检查当前数据量 */

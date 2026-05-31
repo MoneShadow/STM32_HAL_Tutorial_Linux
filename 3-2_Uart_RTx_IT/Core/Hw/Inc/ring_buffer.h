@@ -15,7 +15,7 @@ typedef struct {
 
 void Rbuffer_Init(ring_buffer *rb, uint8_t *mem, uint32_t len);
 uint8_t R_WriteByte(ring_buffer *rb, uint8_t Byte);
-uint8_t R_ReadByte(ring_buffer *rb);
+uint8_t R_ReadByte(ring_buffer *rb, uint8_t *Byte);
 uint32_t R_Avilable(ring_buffer *rb);
 uint32_t R_Free(ring_buffer *rb);
 

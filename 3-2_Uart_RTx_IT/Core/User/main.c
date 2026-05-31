@@ -13,7 +13,7 @@ int main(void) {
             uint8_t vallen = rb.buffer[rb.tail], j = 0, byte = 0;
             rb.tail = NEXT_IDX(rb.tail, (&rb));
             while (vallen-- != 0) {
-                byte = R_ReadByte(&rb);
+                R_ReadByte(&rb, &byte);
                 txbuffer2[j++] = byte;
             }
             HAL_UART_Transmit_IT(&uart2, txbuffer2, j);
