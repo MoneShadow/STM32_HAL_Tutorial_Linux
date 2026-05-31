@@ -1,5 +1,7 @@
 #include "stm32f1xx_hal.h"
 #include "uart.h"
+#include "myuart.h"
+#include "ring_buffer.h"
 #include <string.h>
 
 UART_HandleTypeDef uart1;
@@ -24,20 +26,37 @@ void UART_Init(void) {
     UART_RXptrInit();
 }
 
-void HAL_UART_MspInit(UART_HandleTypeDef *huart) {    
-    /* 开启时钟 */
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    __HAL_RCC_USART1_CLK_ENABLE();
-    /* 配置GPIO */
-    GPIO_InitTypeDef GPIO_InitStructure;
-    GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStructure.Pin = GPIO_PIN_10;
-    GPIO_InitStructure.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
-    GPIO_InitStructure.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStructure.Pin = GPIO_PIN_9;
-    GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_MEDIUM;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
+void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
+	if (huart->Instance == USART1) {    
+		/* 开启时钟 */
+		__HAL_RCC_GPIOA_CLK_ENABLE();
+		__HAL_RCC_USART1_CLK_ENABLE();
+		/* 配置GPIO */
+		GPIO_InitTypeDef GPIO_InitStructure;
+		GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
+		GPIO_InitStructure.Pin = GPIO_PIN_10;
+		GPIO_InitStructure.Pull = GPIO_NOPULL;
+		HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
+		GPIO_InitStructure.Mode = GPIO_MODE_AF_PP;
+		GPIO_InitStructure.Pin = GPIO_PIN_9;
+		GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_MEDIUM;
+		HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
+	}
+	if (huart->Instance == USART2) {
+		/* 开启时钟 */
+		__HAL_RCC_GPIOA_CLK_ENABLE();
+		__HAL_RCC_USART2_CLK_ENABLE();
+		/* 配置GPIO */
+		GPIO_InitTypeDef GPIO_InitStructure;
+		GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
+		GPIO_InitStructure.Pin = GPIO_PIN_3; // RX
+		GPIO_InitStructure.Pull = GPIO_NOPULL;
+		HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
+		GPIO_InitStructure.Mode = GPIO_MODE_AF_PP;
+		GPIO_InitStructure.Pin = GPIO_PIN_2; // TX
+		GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_MEDIUM;
+		HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
+	}
 }
 
 void UART_RXptrInit(void) {
@@ -78,16 +97,25 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	if (huart -> Instance == USART1) {
 		
 	}
+	if (huart -> Instance == USART2) {
+		
+	}
 }
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
 	if (huart -> Instance == USART1) {
 		hcd1.txstate = 0;
 	}
+	if (huart -> Instance == USART2) {
+		HAL_UART_Receive_IT(&uart2, rxbuffer2, RX_SIZE2);
+	}
 }
 
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) {
 	if (huart -> Instance == USART1) {
+		
+	}
+	if (huart -> Instance == USART2) {
 		
 	}
 }
@@ -107,5 +135,19 @@ void HAL_UART_AbortReceiveCpltCallback(UART_HandleTypeDef *huart) {
 			hcd1.RXINptr -> start = &rxbuffer[hcd1.RXCounter];
 		}
 		HAL_UART_Receive_IT(&uart1, hcd1.RXINptr -> start, RX_Data_MAX);
+	}
+	if (huart -> Instance == USART2) {
+		if (R_Free(&rb) >= count) {
+			R_WriteByte(&rb, count);
+			uint8_t byte;
+			for (uint8_t j = 0; count != 0; count--, j++) {
+				byte = rxbuffer2[j];
+				R_WriteByte(&rb, byte);
+			}
+			status = 1;
+		}
+		else {
+			HAL_UART_Receive_IT(&uart2, rxbuffer2, RX_SIZE2);
+		}
 	}
 }
