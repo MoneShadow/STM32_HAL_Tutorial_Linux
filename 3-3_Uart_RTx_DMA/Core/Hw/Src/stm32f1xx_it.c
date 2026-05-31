@@ -175,4 +175,13 @@ void USART2_IRQHandler(void) {
 		HAL_UART_AbortReceive_IT(&uart2);
 	}
 }
+
+void DMA1_Channel6_IRQHandler(void) {
+  HAL_DMA_IRQHandler(&uart2_dmarx_st);
+}
+
+void DMA1_Channel7_IRQHandler(void) {
+  HAL_DMA_IRQHandler(&uart2_dmatx_st);
+}
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

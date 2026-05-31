@@ -12,6 +12,8 @@ uint8_t Buffer[Buffer_Size];
 ring_buffer rb;
 __IO uint8_t count = 0;
 __IO uint8_t status = 0;
+DMA_HandleTypeDef uart2_dmarx_st;
+DMA_HandleTypeDef uart2_dmatx_st;
 
 void UART1_Init(void) {
     /* 串口基地址 8N + 1 */
@@ -48,10 +50,42 @@ void UART2_Init(void) {
     /* 设置优先级 开启中断 */
     HAL_NVIC_SetPriority(USART2_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(USART2_IRQn);
+
+	/* 配置DMA 接收方向 */
+	uart2_dmarx_st.Instance = DMA1_Channel6; // 通道地址
+	uart2_dmarx_st.Init.Direction = DMA_PERIPH_TO_MEMORY;
+	uart2_dmarx_st.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+	uart2_dmarx_st.Init.MemInc = DMA_MINC_ENABLE;
+	uart2_dmarx_st.Init.Mode = DMA_NORMAL;
+	uart2_dmarx_st.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+	uart2_dmarx_st.Init.PeriphInc = DMA_PINC_DISABLE;
+	uart2_dmarx_st.Init.Priority = DMA_PRIORITY_MEDIUM;
+	__HAL_LINKDMA(&uart2, hdmarx, uart2_dmarx_st);	// 父指针互指
+    /* 设置优先级 开启中断 */
+    HAL_NVIC_SetPriority(DMA1_Channel6_IRQn, 4, 0);
+    HAL_NVIC_EnableIRQ(DMA1_Channel6_IRQn);
+
+	/* 配置DMA 发送方向 */
+	uart2_dmarx_st.Instance = DMA1_Channel7; // 通道地址
+	uart2_dmatx_st.Init.Direction = DMA_MEMORY_TO_PERIPH;
+	uart2_dmatx_st.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+	uart2_dmatx_st.Init.MemInc = DMA_MINC_ENABLE;
+	uart2_dmatx_st.Init.Mode = DMA_NORMAL;
+	uart2_dmatx_st.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+	uart2_dmatx_st.Init.PeriphInc = DMA_PINC_DISABLE;
+	uart2_dmatx_st.Init.Priority = DMA_PRIORITY_MEDIUM;
+	__HAL_LINKDMA(&uart2, hdmarx, uart2_dmatx_st);	// 父指针互指
+	/* 设置优先级 开启中断 */
+    HAL_NVIC_SetPriority(DMA1_Channel7_IRQn, 4, 0);
+    HAL_NVIC_EnableIRQ(DMA1_Channel7_IRQn);
+
+	/* 开启DMA时钟 */
+	__HAL_RCC_DMA1_CLK_ENABLE();
+
     /* 开启空闲中断 */
     __HAL_UART_ENABLE_IT(&uart2, UART_IT_IDLE);
-    /* 开启接收中断 */
-    HAL_UART_Receive_IT(&uart2, rxbuffer2, RX_SIZE2);
+    /* 开启DMA接收 */
+	HAL_UART_Receive_DMA(&uart2, rxbuffer2, RX_SIZE2);
 }
 
 void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
@@ -174,8 +208,6 @@ void HAL_UART_AbortReceiveCpltCallback(UART_HandleTypeDef *huart) {
 			}
 			status = 1;
 		}
-		else {
-			HAL_UART_Receive_IT(&uart2, rxbuffer2, RX_SIZE2);
-		}
+		HAL_UART_Receive_IT(&uart2, rxbuffer2, RX_SIZE2);
 	}
 }
