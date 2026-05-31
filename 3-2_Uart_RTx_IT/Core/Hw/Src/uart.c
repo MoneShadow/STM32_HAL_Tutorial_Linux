@@ -1,7 +1,5 @@
 #include "stm32f1xx_hal.h"
 #include "uart.h"
-#include "myuart.h"
-#include "ring_buffer.h"
 #include <string.h>
 
 UART_HandleTypeDef uart1;
@@ -12,6 +10,8 @@ UART_HandleTypeDef uart2;
 uint8_t rxbuffer2[RX_SIZE2], txbuffer2[TX_SIZE2];
 uint8_t Buffer[Buffer_Size];
 ring_buffer rb;
+__IO uint8_t count = 0;
+__IO uint8_t status = 0;
 
 void UART1_Init(void) {
     /* 串口基地址 8N + 1 */
