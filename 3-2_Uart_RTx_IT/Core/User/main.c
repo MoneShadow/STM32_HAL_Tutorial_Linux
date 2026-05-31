@@ -1,23 +1,22 @@
 #include "stm32f1xx_hal.h"
 #include "rcc.h"
-#include "uart.h"
+#include "myuart.h"
 
 int main(void) {
     HAL_Init();
     RCC_InitClock();
-    UART_Init();
+    MyUart_Init();
 
     while (1) {
-        if (hcd1.RXOUTptr != hcd1.RXINptr) {
-            UART_TXData(hcd1.RXOUTptr -> start, hcd1.RXOUTptr -> end - hcd1.RXOUTptr -> start + 1);
-        }
-        if (hcd1.TXOUTptr != hcd1.TXINptr && (hcd1.txstate == 0)) {
-            hcd1.txstate = 1;
-            HAL_UART_Transmit_IT(&uart1, hcd1.TXOUTptr ->start, hcd1.TXOUTptr -> end - hcd1.TXOUTptr -> start + 1);
-            hcd1.TXOUTptr++;
-            if (hcd1.TXOUTptr == hcd1.TXENDptr) {
-                hcd1.TXOUTptr = &hcd1.TXptrData[0];
+        if (status == 1) {
+            status = 0;
+            uint8_t vallen = rb.buffer[rb.tail], j = 0, byte = 0;
+            rb.tail = NEXT_IDX(rb.tail, (&rb));
+            while (vallen-- != 0) {
+                byte = R_ReadByte(&rb);
+                txbuffer2[j++] = byte;
             }
+            HAL_UART_Transmit_IT(&uart2, txbuffer2, j);
         }
 	}
 }
