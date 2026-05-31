@@ -169,7 +169,9 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
 		hcd1.txstate = 0;
 	}
 	if (huart -> Instance == USART2) {
-		HAL_UART_Receive_IT(&uart2, rxbuffer2, RX_SIZE2);
+		if (R_Avilable(&rb) != 0) {
+			status = 1;
+		}
 	}
 }
 
