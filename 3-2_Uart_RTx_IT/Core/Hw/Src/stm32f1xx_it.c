@@ -22,8 +22,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_it.h"
-#include "uart.h"
-#include "myuart.h"   
+#include "uart.h"  
 
 /** @addtogroup STM32F1xx_HAL_Examples
   * @{

@@ -1,11 +1,11 @@
 #include "stm32f1xx_hal.h"
 #include "rcc.h"
-#include "myuart.h"
+#include "uart.h"
 
 int main(void) {
     HAL_Init();
     RCC_InitClock();
-    MyUart_Init();
+    UART2_Init();
 
     while (1) {
         if (status == 1) {
