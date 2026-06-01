@@ -8,7 +8,7 @@ int main(void) {
     UART2_Init();
 
     while (1) {
-        if (status == 1) {
+        if (status == 1 && uart2.gState == HAL_UART_STATE_READY) {
             status = 0;
             uint8_t vallen = rb.buffer[rb.tail], j = 0, byte = 0;
             rb.tail = NEXT_IDX(rb.tail, (&rb));
