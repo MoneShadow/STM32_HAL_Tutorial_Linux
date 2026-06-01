@@ -2,6 +2,7 @@
 #define __UART_H
 
 #include <stdint.h>
+#include "stm32f1xx_hal_uart.h"
 
 #define RX_SIZE		2048
 #define TX_SIZE		2048

@@ -2,6 +2,8 @@
 #define __RING_BUFFER_H
 
 #include <stdint.h>
+#include "stm32f1xx_hal.h"
+
 /* 下一个索引 */
 #define NEXT_IDX(idx, rb)   ((idx + 1) % (rb->size))
 
