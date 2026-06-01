@@ -50,4 +50,7 @@ extern ring_buffer rb;
 
 void UART2_Init(void);
 
+extern DMA_HandleTypeDef uart2_dmarx_st;
+extern DMA_HandleTypeDef uart2_dmatx_st;
+
 #endif
