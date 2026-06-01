@@ -51,6 +51,9 @@ void UART2_Init(void) {
     HAL_NVIC_SetPriority(USART2_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(USART2_IRQn);
 
+	/* 开启DMA时钟 */
+	__HAL_RCC_DMA1_CLK_ENABLE();
+
 	/* 配置DMA 接收方向 */
 	uart2_dmarx_st.Instance = DMA1_Channel6; // 通道地址
 	uart2_dmarx_st.Init.Direction = DMA_PERIPH_TO_MEMORY;
@@ -61,12 +64,13 @@ void UART2_Init(void) {
 	uart2_dmarx_st.Init.PeriphInc = DMA_PINC_DISABLE;
 	uart2_dmarx_st.Init.Priority = DMA_PRIORITY_MEDIUM;
 	__HAL_LINKDMA(&uart2, hdmarx, uart2_dmarx_st);	// 父指针互指
+	HAL_DMA_Init(&uart2_dmarx_st);
     /* 设置优先级 开启中断 */
     HAL_NVIC_SetPriority(DMA1_Channel6_IRQn, 4, 0);
     HAL_NVIC_EnableIRQ(DMA1_Channel6_IRQn);
 
 	/* 配置DMA 发送方向 */
-	uart2_dmarx_st.Instance = DMA1_Channel7; // 通道地址
+	uart2_dmatx_st.Instance = DMA1_Channel7; // 通道地址
 	uart2_dmatx_st.Init.Direction = DMA_MEMORY_TO_PERIPH;
 	uart2_dmatx_st.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
 	uart2_dmatx_st.Init.MemInc = DMA_MINC_ENABLE;
@@ -74,13 +78,11 @@ void UART2_Init(void) {
 	uart2_dmatx_st.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
 	uart2_dmatx_st.Init.PeriphInc = DMA_PINC_DISABLE;
 	uart2_dmatx_st.Init.Priority = DMA_PRIORITY_MEDIUM;
-	__HAL_LINKDMA(&uart2, hdmarx, uart2_dmatx_st);	// 父指针互指
+	__HAL_LINKDMA(&uart2, hdmatx, uart2_dmatx_st);	// 父指针互指
+	HAL_DMA_Init(&uart2_dmatx_st);
 	/* 设置优先级 开启中断 */
     HAL_NVIC_SetPriority(DMA1_Channel7_IRQn, 4, 0);
     HAL_NVIC_EnableIRQ(DMA1_Channel7_IRQn);
-
-	/* 开启DMA时钟 */
-	__HAL_RCC_DMA1_CLK_ENABLE();
 
     /* 开启空闲中断 */
     __HAL_UART_ENABLE_IT(&uart2, UART_IT_IDLE);
@@ -210,6 +212,6 @@ void HAL_UART_AbortReceiveCpltCallback(UART_HandleTypeDef *huart) {
 			}
 			status = 1;
 		}
-		HAL_UART_Receive_IT(&uart2, rxbuffer2, RX_SIZE2);
+		HAL_UART_Receive_DMA(&uart2, rxbuffer2, RX_SIZE2);
 	}
 }

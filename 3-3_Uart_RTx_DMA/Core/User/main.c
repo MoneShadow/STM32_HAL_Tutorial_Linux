@@ -16,7 +16,7 @@ int main(void) {
                 R_ReadByte(&rb, &byte);
                 txbuffer2[j++] = byte;
             }
-            HAL_UART_Transmit_IT(&uart2, txbuffer2, j);
+            HAL_UART_Transmit_DMA(&uart2, txbuffer2, j);
         }
 	}
 }

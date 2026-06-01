@@ -171,7 +171,7 @@ void USART2_IRQHandler(void) {
 
   if (__HAL_UART_GET_FLAG(&uart2, UART_FLAG_IDLE)) {
 		__HAL_UART_CLEAR_IDLEFLAG(&uart2);
-    count = (uart2.RxXferSize - uart2.RxXferCount);
+    count = (uart2.RxXferSize - __HAL_DMA_GET_COUNTER(&uart2_dmarx_st));
 		HAL_UART_AbortReceive_IT(&uart2);
 	}
 }
