@@ -1,7 +1,7 @@
 #ifndef __UART_H
 #define __UART_H
 
-#include "string.h"
+#include <stdint.h>
 
 #define RX_SIZE		2048
 #define TX_SIZE		2048
