@@ -1,24 +1,25 @@
 #include "stm32f1xx_hal.h"
 #include "rcc.h"
 #include "uart.h"
+#include "tim.h"
+#include <stdint.h>
 
 int main(void) {
     HAL_Init();
     RCC_InitClock();
     UART2_Init();
+    Timer1_Init(2000 - 1, 36000 - 1, 0);
 
-    u2_prinf("%x %d %c\r\n", 0x30, 0x30, 0x30);
-
+    uint8_t num = 1;
+    
     while (1) {
-        if (status == 1 && uart2.gState == HAL_UART_STATE_READY) {
-            status = 0;
-            uint8_t vallen = rb.buffer[rb.tail], j = 0, byte = 0;
-            rb.tail = NEXT_IDX(rb.tail, (&rb));
-            while (vallen-- != 0) {
-                R_ReadByte(&rb, &byte);
-                txbuffer2[j++] = byte;
+        if (__HAL_TIM_GET_FLAG(&Tim1_InitStructure, TIM_FLAG_UPDATE)) {
+            __HAL_TIM_CLEAR_FLAG(&Tim1_InitStructure, TIM_FLAG_UPDATE);
+            u2_prinf("Time: %d\r\n", num++);
+            if (num > 5) {
+                HAL_TIM_Base_Stop(&Tim1_InitStructure);
+                HAL_TIM_Base_DeInit(&Tim1_InitStructure);
             }
-            HAL_UART_Transmit_DMA(&uart2, txbuffer2, j);
-        }
+        }    
 	}
 }
