@@ -173,6 +173,10 @@ void USART2_IRQHandler(void) {
 	}
 }
 
+void DMA1_Channel5_IRQHandler(void) {
+  HAL_DMA_IRQHandler(&DMA1InitStructure);
+}
+
 void DMA1_Channel6_IRQHandler(void) {
   HAL_DMA_IRQHandler(&uart2_dmarx_st);
 }
