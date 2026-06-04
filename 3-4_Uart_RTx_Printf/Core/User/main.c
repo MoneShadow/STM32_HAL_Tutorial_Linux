@@ -7,6 +7,8 @@ int main(void) {
     RCC_InitClock();
     UART2_Init();
 
+    u2_prinf("%x %d %c\r\n", 0x30, 0x30, 0x30);
+
     while (1) {
         if (status == 1 && uart2.gState == HAL_UART_STATE_READY) {
             status = 0;

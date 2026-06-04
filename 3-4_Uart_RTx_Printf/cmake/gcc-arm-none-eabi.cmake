@@ -77,6 +77,8 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T \"${CMAKE_SOURCE_DIR}/S
 
 # --specs=nano.specs 使用 nano libc (即C精简库)
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --specs=nano.specs")
+# --specs=nosys.specs 提供 _sbrk _write 等系统调用 stub (裸机无 OS 时必须)
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --specs=nosys.specs")
 
 # -Wl, 把后面的参数转发给linker(ld)
 # -Wl,--gc-sections 删除无用代码 配合上面的 -ffunction-sections -fdata-sections 实现 HAL没用到的函数不进入最终ELF
