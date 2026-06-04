@@ -1,6 +1,8 @@
 #include "stm32f1xx_hal.h"
 #include "uart.h"
+#include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 
 UART_HandleTypeDef uart1;
 
@@ -118,6 +120,19 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 		GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_MEDIUM;
 		HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
 	}
+}
+
+void u2_prinf(char *fmt, ...) {
+	uint8_t tmpbuffer[256];
+	va_list ap;
+	va_start(ap, fmt);
+	vsnprintf((char *)tmpbuffer, sizeof(tmpbuffer), fmt, ap);
+	va_end(ap);
+	for (uint16_t i = 0; i < strlen((char *)tmpbuffer); i++) {
+		while(!__HAL_UART_GET_FLAG(&uart2, UART_FLAG_TXE));
+		uart2.Instance->DR = tmpbuffer[i];
+	}
+	while(!__HAL_UART_GET_FLAG(&uart2, UART_FLAG_TC));
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
