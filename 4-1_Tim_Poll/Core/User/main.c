@@ -1,0 +1,24 @@
+#include "stm32f1xx_hal.h"
+#include "rcc.h"
+#include "uart.h"
+
+int main(void) {
+    HAL_Init();
+    RCC_InitClock();
+    UART2_Init();
+
+    u2_prinf("%x %d %c\r\n", 0x30, 0x30, 0x30);
+
+    while (1) {
+        if (status == 1 && uart2.gState == HAL_UART_STATE_READY) {
+            status = 0;
+            uint8_t vallen = rb.buffer[rb.tail], j = 0, byte = 0;
+            rb.tail = NEXT_IDX(rb.tail, (&rb));
+            while (vallen-- != 0) {
+                R_ReadByte(&rb, &byte);
+                txbuffer2[j++] = byte;
+            }
+            HAL_UART_Transmit_DMA(&uart2, txbuffer2, j);
+        }
+	}
+}
