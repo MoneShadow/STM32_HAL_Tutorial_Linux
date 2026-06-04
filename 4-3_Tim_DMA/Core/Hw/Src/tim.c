@@ -79,7 +79,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if (htim->Instance == TIM1) {
         if (htim->hdma[TIM_DMA_ID_UPDATE]->State == HAL_DMA_STATE_READY) {
             u2_prinf("DMA_TC\r\n");
-            HAL_DMA_DeInit(&DMA1InitStructure);
+            HAL_DMA_DeInit(htim->hdma[TIM_DMA_ID_UPDATE]);
         }
         else {
             u2_prinf("Time: %d\r\n", num++);
@@ -93,6 +93,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 void HAL_TIM_PeriodElapsedHalfCpltCallback(TIM_HandleTypeDef *htim) {
     if (htim->Instance == TIM1) {
-        u2_prinf("Half_TIM1\r\n");
+        u2_prinf("DMA_Half\r\n");
     }
 }
