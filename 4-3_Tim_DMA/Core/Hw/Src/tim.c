@@ -24,6 +24,7 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     HAL_TIM_Base_Init(&Tim1_InitStructure);
     __HAL_TIM_CLEAR_FLAG(&Tim1_InitStructure, TIM_FLAG_UPDATE);
     HAL_TIM_Base_Start_DMA(&Tim1_InitStructure, (uint32_t *)dmabuffer, 4);
+    __HAL_TIM_ENABLE_IT(&Tim1_InitStructure, TIM_FLAG_UPDATE);
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
@@ -42,10 +43,10 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
         __HAL_LINKDMA(&Tim1_InitStructure, hdma[TIM_DMA_ID_UPDATE], DMA1InitStructure);
         HAL_DMA_Init(&DMA1InitStructure);
 
-        HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 4, 0);
+        HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 5, 0);
         HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
 
-        HAL_NVIC_SetPriority(TIM1_UP_IRQn, 5, 0);
+        HAL_NVIC_SetPriority(TIM1_UP_IRQn, 3, 0);
         HAL_NVIC_EnableIRQ(TIM1_UP_IRQn);
     }
     else if (htim->Instance == TIM2) {
@@ -79,6 +80,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
         if (htim->State == HAL_TIM_STATE_READY) {
             u2_prinf("DMA_TC\r\n");
             htim->State = HAL_TIM_STATE_BUSY;
+        }
+        else {
+            u2_prinf("Time: %d\r\n", num++);
         }
     }
 }
