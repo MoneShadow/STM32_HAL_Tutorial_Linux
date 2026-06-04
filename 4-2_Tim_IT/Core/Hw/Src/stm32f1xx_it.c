@@ -23,6 +23,7 @@
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_it.h"
 #include "uart.h"  
+#include "tim.h"
 
 /** @addtogroup STM32F1xx_HAL_Examples
   * @{
@@ -178,6 +179,10 @@ void DMA1_Channel6_IRQHandler(void) {
 
 void DMA1_Channel7_IRQHandler(void) {
   HAL_DMA_IRQHandler(&uart2_dmatx_st);
+}
+
+void TIM1_UP_IRQHandler(void) {
+  HAL_TIM_IRQHandler(&Tim1_InitStructure);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
