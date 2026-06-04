@@ -3,8 +3,6 @@
 #include <string.h>
 
 UART_HandleTypeDef uart1;
-HCD	hcd1;
-uint8_t rxbuffer[RX_SIZE], txbuffer[TX_SIZE];
 
 UART_HandleTypeDef uart2;
 uint8_t rxbuffer2[RX_SIZE2], txbuffer2[TX_SIZE2];
@@ -30,7 +28,6 @@ void UART1_Init(void) {
     /* 设置优先级 开启中断 */
     HAL_NVIC_SetPriority(USART1_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(USART1_IRQn);
-    UART_RXptrInit();
 }
 
 void UART2_Init(void) {
@@ -123,40 +120,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 	}
 }
 
-void UART_RXptrInit(void) {
-	hcd1.RXINptr = &hcd1.RXptrData[0];
-	hcd1.RXOUTptr = &hcd1.RXptrData[0];
-	hcd1.RXENDptr =  &hcd1.RXptrData[9];
-	hcd1.RXINptr -> start = &rxbuffer[0];
-	hcd1.TXINptr = &hcd1.TXptrData[0];
-	hcd1.TXOUTptr = &hcd1.TXptrData[0];
-	hcd1.TXENDptr =  &hcd1.TXptrData[9];
-	hcd1.TXINptr -> start = &txbuffer[0];
-	__HAL_UART_ENABLE_IT(&uart1, UART_IT_IDLE);
-	HAL_UART_Receive_IT(&uart1, hcd1.RXINptr -> start, RX_Data_MAX);
-}
-
-void UART_TXData(uint8_t *data, uint32_t data_len) {
-	if (data_len >= (TX_SIZE - hcd1.TXCounter)) {
-		hcd1.TXINptr -> start = &txbuffer[0];
-		hcd1.TXCounter = 0;
-	}
-	else {
-		hcd1.TXINptr -> start = &txbuffer[hcd1.TXCounter];
-	}
-	memcpy(hcd1.TXINptr -> start, data, data_len);
-	hcd1.TXCounter += data_len;
-	hcd1.TXINptr -> end = &txbuffer[hcd1.TXCounter - 1];
-	hcd1.RXOUTptr++;
-	if (hcd1.RXOUTptr == hcd1.RXENDptr) {
-		hcd1.RXOUTptr = &hcd1.RXptrData[0];
-	}
-	hcd1.TXINptr++;
-	if (hcd1.TXINptr == hcd1.TXENDptr) {
-		hcd1.TXINptr = &hcd1.TXptrData[0];
-	}
-}
-
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	if (huart -> Instance == USART1) {
 		
@@ -168,7 +131,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
 	if (huart -> Instance == USART1) {
-		hcd1.txstate = 0;
+
 	}
 	if (huart -> Instance == USART2) {
 		if (R_Avilable(&rb) != 0) {
@@ -188,19 +151,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) {
 
 void HAL_UART_AbortReceiveCpltCallback(UART_HandleTypeDef *huart) {
 	if (huart -> Instance == USART1) {
-		hcd1.RXINptr -> end = &rxbuffer[hcd1.RXCounter - 1];
-		hcd1.RXINptr++;
-		if (hcd1.RXINptr == hcd1.RXENDptr) {
-			hcd1.RXINptr = &hcd1.RXptrData[0];
-		}
-		if ((RX_SIZE - hcd1.RXCounter) < RX_Data_MAX) {
-			hcd1.RXINptr -> start = &rxbuffer[0];
-			hcd1.RXCounter = 0;
-		}
-		else {
-			hcd1.RXINptr -> start = &rxbuffer[hcd1.RXCounter];
-		}
-		HAL_UART_Receive_IT(&uart1, hcd1.RXINptr -> start, RX_Data_MAX);
+
 	}
 	if (huart -> Instance == USART2) {
 		if (R_Free(&rb) >= count) {
