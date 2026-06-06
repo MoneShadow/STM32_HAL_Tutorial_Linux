@@ -24,7 +24,7 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
 
     Tim_Clock.ClockSource = TIM_CLOCKSOURCE_TI1;
     //Tim_Clock.ClockPrescaler = TIM_CLOCKPRESCALER_DIV1;
-    Tim_Clock.ClockFilter = 0x3;
+    Tim_Clock.ClockFilter = 0xF;
     Tim_Clock.ClockPolarity = TIM_CLOCKPOLARITY_RISING;
     
     HAL_TIM_Base_Init(&Tim_InitStructure);
@@ -70,7 +70,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
         DMA_ST.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
         DMA_ST.Init.PeriphInc = DMA_PINC_DISABLE;
         DMA_ST.Init.Direction = DMA_MEMORY_TO_PERIPH;
-        DMA_ST.Init.Mode = DMA_NORMAL;
+        DMA_ST.Init.Mode = DMA_CIRCULAR;
         DMA_ST.Init.Priority = DMA_PRIORITY_MEDIUM;
         __HAL_LINKDMA(&Tim_InitStructure, hdma[TIM_DMA_ID_UPDATE], DMA_ST);
         HAL_DMA_Init(&DMA_ST);
@@ -104,9 +104,9 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef *htim) {
 /* update中断和DMA传输完成中断共用一个回调函数 故需要进行区分 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if (htim->Instance == TIM1) {
-        if (htim->hdma[0]->State == HAL_DMA_STATE_READY) {
+        if (htim->State == HAL_TIM_STATE_READY) {
             u2_prinf("DMA_TC\r\n");
-            HAL_DMA_DeInit(htim->hdma[0]);
+            htim->State = HAL_TIM_STATE_BUSY;
         }
         else {
             u2_prinf("TimeUpdata\r\n");
@@ -141,6 +141,7 @@ void HAL_TIM_TriggerCallback(TIM_HandleTypeDef *htim) {
 void HAL_TIM_PeriodElapsedHalfCpltCallback(TIM_HandleTypeDef *htim) {
     if (htim->Instance == TIM1) {
         u2_prinf("DMA_Half\r\n");
+        htim->State = HAL_TIM_STATE_BUSY;
     }
     else if (htim->Instance == TIM2) {
     
