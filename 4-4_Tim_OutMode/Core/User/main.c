@@ -8,9 +8,16 @@ int main(void) {
     HAL_Init();
     RCC_InitClock();
     UART2_Init();
-    Timer1_Init(2000 - 1, 36000 - 1, 0);
+    Timer1_Init(4, 0, 0);
     
     while (1) {
-        
+        if (__HAL_TIM_GET_FLAG(&Tim_InitStructure, TIM_FLAG_TRIGGER)) {
+            __HAL_TIM_CLEAR_FLAG(&Tim_InitStructure, TIM_FLAG_TRIGGER);
+            u2_prinf("Time: %d\r\n", __HAL_TIM_GET_COUNTER(&Tim_InitStructure));
+        }
+        if (__HAL_TIM_GET_FLAG(&Tim_InitStructure, TIM_FLAG_UPDATE)) {
+            __HAL_TIM_CLEAR_FLAG(&Tim_InitStructure, TIM_FLAG_UPDATE);
+            u2_prinf("Time\r\n");
+        }        
 	}
 }
