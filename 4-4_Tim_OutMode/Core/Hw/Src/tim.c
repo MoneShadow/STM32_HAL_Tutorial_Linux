@@ -19,13 +19,19 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_InitStructure.Init.Period = arr;
     Tim_InitStructure.Init.Prescaler = psc;
 
-    Tim_Clock.ClockSource = TIM_CLOCKSOURCE_TI1;
+    Tim_Clock.ClockSource = TIM_CLOCKSOURCE_ETRMODE1;
+    Tim_Clock.ClockPrescaler = TIM_CLOCKPRESCALER_DIV2;
     Tim_Clock.ClockFilter = 0xF;
-    Tim_Clock.ClockPolarity = TIM_CLOCKPOLARITY_FALLING;
+    Tim_Clock.ClockPolarity = TIM_ETRPOLARITY_INVERTED;
     
     HAL_TIM_Base_Init(&Tim_InitStructure);
     HAL_TIM_ConfigClockSource(&Tim_InitStructure, &Tim_Clock);
     __HAL_TIM_CLEAR_FLAG(&Tim_InitStructure, TIM_FLAG_UPDATE);
+
+    HAL_Delay(50);
+    __HAL_TIM_CLEAR_FLAG(&Tim_InitStructure, TIM_FLAG_TRIGGER);
+    __HAL_TIM_SET_COUNTER(&Tim_InitStructure, 0);
+
     HAL_TIM_Base_Start(&Tim_InitStructure);
 }
 
@@ -36,7 +42,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
         __HAL_RCC_TIM1_CLK_ENABLE();
         __HAL_RCC_GPIOA_CLK_ENABLE();
         GPIO_Init_ST.Mode = GPIO_MODE_INPUT;
-        GPIO_Init_ST.Pin = GPIO_PIN_8;
+        GPIO_Init_ST.Pin = GPIO_PIN_12;
         GPIO_Init_ST.Pull = GPIO_PULLDOWN;
         HAL_GPIO_Init(GPIOA, &GPIO_Init_ST);
     }
