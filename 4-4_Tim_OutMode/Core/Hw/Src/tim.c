@@ -12,25 +12,25 @@ TIM_ClockConfigTypeDef Tim_Clock;
 
 void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_InitStructure.Instance = TIM1;
-    Tim_InitStructure.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+    Tim_InitStructure.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
     Tim_InitStructure.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    Tim_InitStructure.Init.CounterMode = TIM_COUNTERMODE_UP;
+    Tim_InitStructure.Init.CounterMode = TIM_COUNTERMODE_CENTERALIGNED1;
     Tim_InitStructure.Init.RepetitionCounter = rep;
     Tim_InitStructure.Init.Period = arr;
     Tim_InitStructure.Init.Prescaler = psc;
 
     Tim_Clock.ClockSource = TIM_CLOCKSOURCE_ETRMODE1;
-    Tim_Clock.ClockPrescaler = TIM_CLOCKPRESCALER_DIV2;
-    Tim_Clock.ClockFilter = 0xF;
+    Tim_Clock.ClockPrescaler = TIM_CLOCKPRESCALER_DIV1;
+    Tim_Clock.ClockFilter = 0x3;
     Tim_Clock.ClockPolarity = TIM_ETRPOLARITY_INVERTED;
     
     HAL_TIM_Base_Init(&Tim_InitStructure);
     HAL_TIM_ConfigClockSource(&Tim_InitStructure, &Tim_Clock);
     __HAL_TIM_CLEAR_FLAG(&Tim_InitStructure, TIM_FLAG_UPDATE);
 
-    HAL_Delay(50);
-    __HAL_TIM_CLEAR_FLAG(&Tim_InitStructure, TIM_FLAG_TRIGGER);
-    __HAL_TIM_SET_COUNTER(&Tim_InitStructure, 0);
+    //HAL_Delay(50);
+    //__HAL_TIM_CLEAR_FLAG(&Tim_InitStructure, TIM_FLAG_TRIGGER);
+    //__HAL_TIM_SET_COUNTER(&Tim_InitStructure, 0);
 
     HAL_TIM_Base_Start(&Tim_InitStructure);
 }
