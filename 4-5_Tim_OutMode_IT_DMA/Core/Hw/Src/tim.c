@@ -12,9 +12,9 @@ TIM_ClockConfigTypeDef Tim_Clock;
 
 void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_InitStructure.Instance = TIM1;
-    Tim_InitStructure.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+    Tim_InitStructure.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
     Tim_InitStructure.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    Tim_InitStructure.Init.CounterMode = TIM_COUNTERMODE_CENTERALIGNED1;
+    Tim_InitStructure.Init.CounterMode = TIM_COUNTERMODE_UP;
     Tim_InitStructure.Init.RepetitionCounter = rep;
     Tim_InitStructure.Init.Period = arr;
     Tim_InitStructure.Init.Prescaler = psc;
@@ -32,7 +32,14 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     //__HAL_TIM_CLEAR_FLAG(&Tim_InitStructure, TIM_FLAG_TRIGGER);
     //__HAL_TIM_SET_COUNTER(&Tim_InitStructure, 0);
 
-    HAL_TIM_Base_Start(&Tim_InitStructure);
+    HAL_NVIC_SetPriority(TIM1_UP_IRQn, 3, 0);
+    HAL_NVIC_EnableIRQ(TIM1_UP_IRQn);
+
+    HAL_NVIC_SetPriority(TIM1_TRG_COM_IRQn, 3, 0);
+    HAL_NVIC_EnableIRQ(TIM1_TRG_COM_IRQn);
+
+    HAL_TIM_Base_Start_IT(&Tim_InitStructure);
+    __HAL_TIM_ENABLE_IT(&Tim_InitStructure, TIM_IT_TRIGGER);
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
@@ -69,5 +76,35 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef *htim) {
     }
     else if (htim->Instance == TIM4) {
         __HAL_RCC_TIM4_CLK_DISABLE();
+    }
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == TIM1) {
+        u2_prinf("TimeUpdata\r\n");
+    }
+    else if (htim->Instance == TIM2) {
+    
+    }
+    else if (htim->Instance == TIM3) {
+    
+    }
+    else if (htim->Instance == TIM4) {
+    
+    }
+}
+
+void HAL_TIM_TriggerCallback(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == TIM1) {
+        u2_prinf("Time: %d\r\n", __HAL_TIM_GET_COUNTER(&Tim_InitStructure));        
+    }
+    else if (htim->Instance == TIM2) {
+    
+    }
+    else if (htim->Instance == TIM3) {
+    
+    }
+    else if (htim->Instance == TIM4) {
+    
     }
 }

@@ -189,4 +189,9 @@ void TIM1_UP_IRQHandler(void) {
   HAL_TIM_IRQHandler(&Tim_InitStructure);
 }
 
+void TIM1_TRG_COM_IRQHandler(void) {
+  HAL_TIM_IRQHandler(&Tim_InitStructure);
+}
+
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
