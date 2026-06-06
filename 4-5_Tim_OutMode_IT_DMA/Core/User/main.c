@@ -11,17 +11,6 @@ int main(void) {
     Timer1_Init(4, 0, 0);
     
     while (1) {
-        if (__HAL_TIM_GET_FLAG(&Tim_InitStructure, TIM_FLAG_TRIGGER)) {
-            __HAL_TIM_CLEAR_FLAG(&Tim_InitStructure, TIM_FLAG_TRIGGER);
-            u2_prinf("Time: %d\r\n", __HAL_TIM_GET_COUNTER(&Tim_InitStructure));
-            if (__HAL_TIM_GET_COUNTER(&Tim_InitStructure) == 3) {
-                //__HAL_TIM_SET_AUTORELOAD(&Tim_InitStructure, 10);
-                //u2_prinf("ARR = 10\r\n");
-            }
-        }
-        if (__HAL_TIM_GET_FLAG(&Tim_InitStructure, TIM_FLAG_UPDATE)) {
-            __HAL_TIM_CLEAR_FLAG(&Tim_InitStructure, TIM_FLAG_UPDATE);
-            u2_prinf("Time\r\n");
-        }
+        
 	}
 }
