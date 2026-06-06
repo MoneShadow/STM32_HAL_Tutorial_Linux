@@ -22,10 +22,10 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_InitStructure.Init.Period = arr;
     Tim_InitStructure.Init.Prescaler = psc;
 
-    Tim_Clock.ClockSource = TIM_CLOCKSOURCE_TI1;
-    //Tim_Clock.ClockPrescaler = TIM_CLOCKPRESCALER_DIV1;
+    Tim_Clock.ClockSource = TIM_CLOCKSOURCE_ETRMODE1;
+    Tim_Clock.ClockPrescaler = TIM_CLOCKPRESCALER_DIV1;
     Tim_Clock.ClockFilter = 0xF;
-    Tim_Clock.ClockPolarity = TIM_CLOCKPOLARITY_RISING;
+    Tim_Clock.ClockPolarity = TIM_CLOCKPOLARITY_INVERTED;
     
     HAL_TIM_Base_Init(&Tim_InitStructure);
     HAL_TIM_ConfigClockSource(&Tim_InitStructure, &Tim_Clock);
