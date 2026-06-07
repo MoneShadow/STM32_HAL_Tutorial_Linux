@@ -122,7 +122,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 	}
 }
 
-void u2_prinf(char *fmt, ...) {
+void u2_printf(char *fmt, ...) {
 	uint8_t tmpbuffer[256];
 	va_list ap;
 	va_start(ap, fmt);

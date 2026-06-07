@@ -8,9 +8,11 @@ int main(void) {
     HAL_Init();
     RCC_InitClock();
     UART2_Init();
-    Timer1_Init(0xFFFF, 36000 - 1, 0);
+    Timer1_Init(200, 7200 - 1, 0);
 
     while (1) {
-
+        if (__HAL_TIM_GET_FLAG(&Tim_InitStructure, TIM_FLAG_CC1)) {
+            u2_printf("matching!\r\n");
+        }
 	}
 }
