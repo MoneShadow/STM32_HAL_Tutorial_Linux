@@ -27,12 +27,12 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_InitIC.ICPrescaler = TIM_ICPSC_DIV1;
     Tim_InitIC.ICFilter = 0x8;
     Tim_InitIC.ICPolarity = TIM_ICPOLARITY_RISING;
-    Tim_InitIC.ICSelection = TIM_ICSELECTION_INDIRECTTI;
+    Tim_InitIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
     HAL_TIM_IC_ConfigChannel(&Tim_InitStructure, &Tim_InitIC, TIM_CHANNEL_1);
 
     Tim_InitIC.ICPrescaler = TIM_ICPSC_DIV1;
     Tim_InitIC.ICFilter = 0x8;
-    Tim_InitIC.ICPolarity = TIM_ICPOLARITY_RISING;
+    Tim_InitIC.ICPolarity = TIM_ICPOLARITY_FALLING;
     Tim_InitIC.ICSelection = TIM_ICSELECTION_INDIRECTTI;
     HAL_TIM_IC_ConfigChannel(&Tim_InitStructure, &Tim_InitIC, TIM_CHANNEL_2);
 
@@ -136,14 +136,15 @@ void HAL_TIM_PeriodElapsedHalfCpltCallback(TIM_HandleTypeDef *htim) {
     }
 }
 
+uint32_t tmp = 0;
 /* 输入捕获中断回调 */
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
     if (htim->Instance == TIM1) {
         if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
-            u2_prinf("IC1: %d\r\n", HAL_TIM_ReadCapturedValue(&Tim_InitStructure, TIM_CHANNEL_1) + (updatacount * 65535));
+            u2_prinf("IC1: %d\r\n", (tmp = HAL_TIM_ReadCapturedValue(&Tim_InitStructure, TIM_CHANNEL_1) + (updatacount * 65535)));
         }
         else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2) {
-            u2_prinf("IC2: %d\r\n", HAL_TIM_ReadCapturedValue(&Tim_InitStructure, TIM_CHANNEL_2) + (updatacount * 65535));
+            u2_prinf("IC2: %d\r\n", HAL_TIM_ReadCapturedValue(&Tim_InitStructure, TIM_CHANNEL_2) + (updatacount * 65535) - tmp);
         }
     }
     else if (htim->Instance == TIM2) {
