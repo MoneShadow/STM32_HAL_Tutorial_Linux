@@ -177,6 +177,10 @@ void DMA1_Channel2_IRQHandler(void) {
   HAL_DMA_IRQHandler(&DMA_ST);
 }
 
+void DMA1_Channel3_IRQHandler(void) {
+  HAL_DMA_IRQHandler(&DMA_ST);
+}
+
 void DMA1_Channel5_IRQHandler(void) {
   HAL_DMA_IRQHandler(&DMA_ST);
 }
