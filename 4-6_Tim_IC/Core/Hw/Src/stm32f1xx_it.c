@@ -173,6 +173,14 @@ void USART2_IRQHandler(void) {
 	}
 }
 
+void DMA1_Channel2_IRQHandler(void) {
+  HAL_DMA_IRQHandler(&DMA_ST);
+}
+
+void DMA1_Channel3_IRQHandler(void) {
+  HAL_DMA_IRQHandler(&DMA_ST);
+}
+
 void DMA1_Channel5_IRQHandler(void) {
   HAL_DMA_IRQHandler(&DMA_ST);
 }
@@ -193,5 +201,8 @@ void TIM1_TRG_COM_IRQHandler(void) {
   HAL_TIM_IRQHandler(&Tim_InitStructure);
 }
 
+void TIM1_CC_IRQHandler(void) {
+  HAL_TIM_IRQHandler(&Tim_InitStructure);
+}
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
