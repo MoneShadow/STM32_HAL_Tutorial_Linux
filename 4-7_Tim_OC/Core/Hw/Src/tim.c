@@ -12,13 +12,20 @@ TIM_HandleTypeDef Tim_InitStructure;
 TIM_OC_InitTypeDef Tim_Init_OC;
 DMA_HandleTypeDef Tim_DMA;
 
-uint16_t dmabuffer[8] = {200, 300, 400, 500, 600, 700, 800, 900};
+uint16_t dmabuffer[6] = {200, 300, 200, 100, 0, 100};
 
 void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_InitStructure.Instance = TIM1;
     Tim_InitStructure.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
     Tim_InitStructure.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     Tim_InitStructure.Init.CounterMode = TIM_COUNTERMODE_CENTERALIGNED1;
+    /* 
+        中央模式1   向下计数触发中断
+        中央模式2   向上计数触发中断
+        中央模式3   向上向下触发中断
+        上到下      先DMA后换向
+        下到上      先换向后DMA
+    */
     Tim_InitStructure.Init.RepetitionCounter = rep;
     Tim_InitStructure.Init.Period = arr;
     Tim_InitStructure.Init.Prescaler = psc;
@@ -56,7 +63,7 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
     HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 3, 0);
 
-    HAL_TIM_OC_Start_DMA(&Tim_InitStructure, TIM_CHANNEL_1, (uint32_t *)dmabuffer, 8);
+    HAL_TIM_OC_Start_DMA(&Tim_InitStructure, TIM_CHANNEL_1, (uint32_t *)dmabuffer, 6);
 }
 
 void HAL_TIM_OC_MspInit(TIM_HandleTypeDef *htim) {
