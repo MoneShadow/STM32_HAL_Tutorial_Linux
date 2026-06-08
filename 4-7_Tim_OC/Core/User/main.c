@@ -9,7 +9,7 @@ int main(void) {
     HAL_Init();
     RCC_InitClock();
     UART2_Init();
-    Timer1_Init(300, 36000 - 1, 0); // 周期 1s 频率 1Hz
+    Timer1_Init(1000, 36000 - 1, 0); // 周期 1s 频率 1Hz
     /*
         定时器时钟频率 CLK = 72MHz
         计数器的计时频率 TIMCLK = CLK/PSC = 72 000 000 / 36 000 = 2 000 Hz
