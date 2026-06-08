@@ -10,6 +10,9 @@
 
 TIM_HandleTypeDef Tim_InitStructure;
 TIM_OC_InitTypeDef Tim_Init_OC;
+DMA_HandleTypeDef Tim_DMA;
+
+uint16_t dmabuffer[8] = {200, 300, 400, 500, 600, 700, 800, 900};
 
 void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_InitStructure.Instance = TIM1;
@@ -24,10 +27,10 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
 
     Tim_Init_OC.OCMode = TIM_OCMODE_TOGGLE;
     Tim_Init_OC.OCPolarity = TIM_OCPOLARITY_HIGH;
-    Tim_Init_OC.Pulse = 200;
+    Tim_Init_OC.Pulse = 100;
     HAL_TIM_OC_ConfigChannel(&Tim_InitStructure, &Tim_Init_OC, TIM_CHANNEL_1);
 
-    Tim_Init_OC.OCMode = TIM_OCMODE_TOGGLE;
+/*     Tim_Init_OC.OCMode = TIM_OCMODE_TOGGLE;
     Tim_Init_OC.OCPolarity = TIM_OCPOLARITY_HIGH;
     Tim_Init_OC.Pulse = 400;
     HAL_TIM_OC_ConfigChannel(&Tim_InitStructure, &Tim_Init_OC, TIM_CHANNEL_2);
@@ -48,7 +51,12 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     HAL_TIM_OC_Start_IT(&Tim_InitStructure, TIM_CHANNEL_1);
     HAL_TIM_OC_Start_IT(&Tim_InitStructure, TIM_CHANNEL_2);
     HAL_TIM_OC_Start_IT(&Tim_InitStructure, TIM_CHANNEL_3);
-    HAL_TIM_OC_Start_IT(&Tim_InitStructure, TIM_CHANNEL_4);
+    HAL_TIM_OC_Start_IT(&Tim_InitStructure, TIM_CHANNEL_4); */
+
+    HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
+    HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 3, 0);
+
+    HAL_TIM_OC_Start_DMA(&Tim_InitStructure, TIM_CHANNEL_1, (uint32_t *)dmabuffer, 8);
 }
 
 void HAL_TIM_OC_MspInit(TIM_HandleTypeDef *htim) {
@@ -62,6 +70,17 @@ void HAL_TIM_OC_MspInit(TIM_HandleTypeDef *htim) {
         GPIO_Init_ST.Pin = GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11;
         GPIO_Init_ST.Speed = GPIO_SPEED_FREQ_LOW;
         HAL_GPIO_Init(GPIOA, &GPIO_Init_ST);
+
+        Tim_DMA.Instance = DMA1_Channel2;
+        Tim_DMA.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
+        Tim_DMA.Init.MemInc = DMA_MINC_ENABLE;
+        Tim_DMA.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+        Tim_DMA.Init.PeriphInc = DMA_PINC_DISABLE;
+        Tim_DMA.Init.Direction = DMA_MEMORY_TO_PERIPH;
+        Tim_DMA.Init.Mode = DMA_CIRCULAR;
+        Tim_DMA.Init.Priority = DMA_PRIORITY_MEDIUM;
+        __HAL_LINKDMA(htim, hdma[TIM_DMA_ID_CC1], Tim_DMA);
+        HAL_DMA_Init(htim->hdma[TIM_DMA_ID_CC1]);
     }
 }
 
@@ -131,6 +150,42 @@ void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim) {
         }
         else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_4) {
             u2_printf("OC: 4\r\n");
+        }
+    }
+}
+
+/* 输出比较DMA完成回调 */
+void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == TIM1) {
+        if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
+            u2_printf("DMA_TC: 1\r\n");
+        }
+        else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2) {
+            u2_printf("DMA_TC: 2\r\n");
+        }
+        else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_3) {
+            u2_printf("DMA_TC: 3\r\n");
+        }
+        else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_4) {
+            u2_printf("DMA_TC: 4\r\n");
+        }
+    }
+}
+
+/* 输出比较DMA半完成回调 */
+void HAL_TIM_PWM_PulseFinishedHalfCpltCallback(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == TIM1) {
+        if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
+            u2_printf("DMA_Half: 1\r\n");
+        }
+        else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2) {
+            u2_printf("DMA_Half: 2\r\n");
+        }
+        else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_3) {
+            u2_printf("DMA_Half: 3\r\n");
+        }
+        else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_4) {
+            u2_printf("DMA_Half: 4\r\n");
         }
     }
 }
