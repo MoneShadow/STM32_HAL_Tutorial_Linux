@@ -173,4 +173,8 @@ void USART2_IRQHandler(void) {
 	}
 }
 
+void TIM1_CC_IRQHandler(void) {
+  HAL_TIM_IRQHandler(&Tim_InitStructure);
+}
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
