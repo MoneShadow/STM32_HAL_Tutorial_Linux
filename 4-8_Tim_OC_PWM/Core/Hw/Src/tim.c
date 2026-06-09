@@ -25,10 +25,10 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_OC_PWM.OCFastMode = TIM_OCFAST_DISABLE;
     Tim_OC_PWM.OCMode = TIM_OCMODE_PWM1;
     Tim_OC_PWM.OCPolarity = TIM_OCPOLARITY_HIGH;
-    Tim_OC_PWM.Pulse = 50;   // CCR
+    Tim_OC_PWM.Pulse = 60;   // CCR
     HAL_TIM_PWM_ConfigChannel(&Tim_InitStructure, &Tim_OC_PWM, TIM_CHANNEL_1);
 
-    HAL_TIM_PWM_Start(&Tim_InitStructure, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start_IT(&Tim_InitStructure, TIM_CHANNEL_1);
 }
 
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
@@ -41,6 +41,18 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
         GPIOA_Init_ST.Pin = GPIO_PIN_8;
         GPIOA_Init_ST.Speed = GPIO_SPEED_FREQ_LOW;
         HAL_GPIO_Init(GPIOA, &GPIOA_Init_ST);
+
+        HAL_NVIC_EnableIRQ(TIM1_CC_IRQn);
+        HAL_NVIC_SetPriority(TIM1_CC_IRQn, 3, 0);
     }
     
+}
+
+/* PWM中断回调(OC) */
+void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == TIM1) {
+        if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
+            u2_printf("PWM_IT: 1\r\n");
+        }
+    }
 }
