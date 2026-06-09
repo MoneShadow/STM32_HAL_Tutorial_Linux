@@ -10,6 +10,7 @@
 
 TIM_HandleTypeDef Tim_InitStructure;
 TIM_OC_InitTypeDef Tim_OC_PWM;
+TIM_BreakDeadTimeConfigTypeDef Tim_Init_BK;
 
 void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_InitStructure.Instance = TIM1;
@@ -31,6 +32,16 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_OC_PWM.OCNIdleState = TIM_OCNIDLESTATE_RESET;
     HAL_TIM_PWM_ConfigChannel(&Tim_InitStructure, &Tim_OC_PWM, TIM_CHANNEL_1);
 
+    Tim_Init_BK.AutomaticOutput = TIM_AUTOMATICOUTPUT_ENABLE;
+    Tim_Init_BK.DeadTime = 0xFF;
+    Tim_Init_BK.LockLevel = TIM_LOCKLEVEL_OFF;
+    Tim_Init_BK.BreakFilter = 0x8;
+    Tim_Init_BK.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
+    Tim_Init_BK.BreakState = TIM_BREAK_ENABLE;
+    Tim_Init_BK.OffStateIDLEMode = TIM_OSSI_ENABLE;
+    Tim_Init_BK.OffStateRunMode = TIM_OSSR_ENABLE;
+    HAL_TIMEx_ConfigBreakDeadTime(&Tim_InitStructure, &Tim_Init_BK);
+
     HAL_TIM_PWM_Start(&Tim_InitStructure, TIM_CHANNEL_1);
     HAL_TIMEx_PWMN_Start(&Tim_InitStructure, TIM_CHANNEL_1);
 }
@@ -50,6 +61,11 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
 
         GPIOA_Init_ST.Mode = GPIO_MODE_AF_PP;
         GPIOA_Init_ST.Pin = GPIO_PIN_13;
+        GPIOA_Init_ST.Speed = GPIO_SPEED_FREQ_LOW;
+        HAL_GPIO_Init(GPIOB, &GPIOA_Init_ST);
+
+        GPIOA_Init_ST.Mode = GPIO_MODE_INPUT;
+        GPIOA_Init_ST.Pin = GPIO_PIN_12;
         GPIOA_Init_ST.Speed = GPIO_SPEED_FREQ_LOW;
         HAL_GPIO_Init(GPIOB, &GPIOA_Init_ST);
     }
