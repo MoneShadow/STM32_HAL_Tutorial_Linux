@@ -43,7 +43,7 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     HAL_TIM_OC_ConfigChannel(&Tim_InitStructure, &Tim_Init_OC, TIM_CHANNEL_1);
 
     Tim_bk.AutomaticOutput = TIM_AUTOMATICOUTPUT_ENABLE;
-    Tim_bk.DeadTime = 0xFF;
+    Tim_bk.DeadTime = 0xFF; // 死区互补->提前变低,延迟变高
     Tim_bk.LockLevel = TIM_LOCKLEVEL_OFF;
     Tim_bk.OffStateIDLEMode = TIM_OSSI_ENABLE;  // 这个是定时器空闲(时钟停止,MOE=0) 开启->输出OCIdleState 的值 关闭->输出高阻态
     Tim_bk.OffStateRunMode = TIM_OSSI_ENABLE;   // 这个是刹车(运行模式下被刹车/软件清零MOE) 开启->OCIdleState 的值 关闭->输出高阻态
