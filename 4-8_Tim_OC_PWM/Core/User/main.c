@@ -9,7 +9,7 @@ int main(void) {
     HAL_Init();
     RCC_InitClock();
     UART2_Init();
-    Timer1_Init(1000, 7200 - 1, 0);
+    Timer1_Init(100, 7200 - 1, 0);
 
     while (1) {
 
