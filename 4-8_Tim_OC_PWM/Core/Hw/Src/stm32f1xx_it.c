@@ -177,8 +177,4 @@ void TIM1_CC_IRQHandler(void) {
   HAL_TIM_IRQHandler(&Tim_InitStructure);
 }
 
-void DMA1_Channel4_IRQHandler(void) {
-  HAL_DMA_IRQHandler(&DMA1_Init_ST);
-}
-
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
