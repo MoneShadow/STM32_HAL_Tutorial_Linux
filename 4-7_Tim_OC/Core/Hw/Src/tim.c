@@ -11,6 +11,7 @@
 TIM_HandleTypeDef Tim_InitStructure;
 TIM_OC_InitTypeDef Tim_Init_OC;
 DMA_HandleTypeDef Tim_DMA;
+TIM_BreakDeadTimeConfigTypeDef Tim_bk;
 
 uint16_t dmabuffer[6] = {200, 300, 200, 100, 0, 100};
 uint16_t dmabuffer4[4] = {900, 700, 500, 300};
@@ -37,7 +38,22 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_Init_OC.OCPolarity = TIM_OCPOLARITY_HIGH;
     Tim_Init_OC.OCNPolarity = TIM_OCPOLARITY_HIGH;
     Tim_Init_OC.Pulse = 200;
+    Tim_Init_OC.OCIdleState = TIM_OCIDLESTATE_RESET;
+    Tim_Init_OC.OCNIdleState = TIM_OCNIDLESTATE_SET;
     HAL_TIM_OC_ConfigChannel(&Tim_InitStructure, &Tim_Init_OC, TIM_CHANNEL_1);
+
+    Tim_bk.AutomaticOutput = TIM_AUTOMATICOUTPUT_ENABLE;
+    Tim_bk.DeadTime = 0xFF;
+    Tim_bk.LockLevel = TIM_LOCKLEVEL_OFF;
+    Tim_bk.OffStateIDLEMode = TIM_OSSI_ENABLE;  // 这个是定时器空闲(时钟停止,MOE=0) 开启->输出OCIdleState 的值 关闭->输出高阻态
+    Tim_bk.OffStateRunMode = TIM_OSSI_ENABLE;   // 这个是刹车(运行模式下被刹车/软件清零MOE) 开启->OCIdleState 的值 关闭->输出高阻态
+    Tim_bk.BreakState = TIM_BREAK_ENABLE;
+    Tim_bk.BreakFilter = 0x8;
+    Tim_bk.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
+    HAL_TIMEx_ConfigBreakDeadTime(&Tim_InitStructure, &Tim_bk);
+
+    HAL_NVIC_EnableIRQ(TIM1_BRK_IRQn);
+    HAL_NVIC_SetPriority(TIM1_BRK_IRQn, 3, 0);
 
 /*     Tim_Init_OC.OCMode = TIM_OCMODE_TOGGLE;
     Tim_Init_OC.OCPolarity = TIM_OCPOLARITY_HIGH;
@@ -54,8 +70,8 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_Init_OC.Pulse = 800;
     HAL_TIM_OC_ConfigChannel(&Tim_InitStructure, &Tim_Init_OC, TIM_CHANNEL_4); */
 
-    HAL_NVIC_EnableIRQ(TIM1_CC_IRQn);
-    HAL_NVIC_SetPriority(TIM1_CC_IRQn, 3, 0);
+/*     HAL_NVIC_EnableIRQ(TIM1_CC_IRQn);
+    HAL_NVIC_SetPriority(TIM1_CC_IRQn, 3, 0); */
 
 /*     HAL_TIM_OC_Start(&Tim_InitStructure, TIM_CHANNEL_1);
     HAL_TIM_OC_Start(&Tim_InitStructure, TIM_CHANNEL_2);
@@ -92,6 +108,11 @@ void HAL_TIM_OC_MspInit(TIM_HandleTypeDef *htim) {
         GPIO_Init_ST.Mode = GPIO_MODE_AF_PP;
         GPIO_Init_ST.Pin = GPIO_PIN_13;
         GPIO_Init_ST.Speed = GPIO_SPEED_FREQ_LOW;
+        HAL_GPIO_Init(GPIOB, &GPIO_Init_ST);
+
+        GPIO_Init_ST.Mode = GPIO_MODE_INPUT;
+        GPIO_Init_ST.Pin = GPIO_PIN_12;
+        GPIO_Init_ST.Pull = GPIO_PULLDOWN;
         HAL_GPIO_Init(GPIOB, &GPIO_Init_ST);
 
 /*         Tim_DMA.Instance = DMA1_Channel4;
@@ -232,5 +253,12 @@ void HAL_TIM_PWM_PulseFinishedHalfCpltCallback(TIM_HandleTypeDef *htim) {
         else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_4) {
             u2_printf("DMA_Half: 4\r\n");
         }
+    }
+}
+
+/* 刹车回调 */
+void HAL_TIMEx_BreakCallback(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == TIM1) {
+
     }
 }
