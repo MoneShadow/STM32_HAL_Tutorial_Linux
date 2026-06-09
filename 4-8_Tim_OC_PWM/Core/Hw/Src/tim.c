@@ -29,7 +29,7 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_OC_PWM.Pulse = 90;   // CCR
     Tim_OC_PWM.OCNPolarity = TIM_OCNPOLARITY_HIGH;
     Tim_OC_PWM.OCIdleState = TIM_OCIDLESTATE_RESET;
-    Tim_OC_PWM.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+    Tim_OC_PWM.OCNIdleState = TIM_OCNIDLESTATE_SET;
     HAL_TIM_PWM_ConfigChannel(&Tim_InitStructure, &Tim_OC_PWM, TIM_CHANNEL_1);
 
     Tim_Init_BK.AutomaticOutput = TIM_AUTOMATICOUTPUT_ENABLE;
@@ -66,7 +66,7 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
 
         GPIOA_Init_ST.Mode = GPIO_MODE_INPUT;
         GPIOA_Init_ST.Pin = GPIO_PIN_12;
-        GPIOA_Init_ST.Speed = GPIO_SPEED_FREQ_LOW;
+        GPIOA_Init_ST.Pull = GPIO_PULLDOWN;
         HAL_GPIO_Init(GPIOB, &GPIOA_Init_ST);
     }
     
