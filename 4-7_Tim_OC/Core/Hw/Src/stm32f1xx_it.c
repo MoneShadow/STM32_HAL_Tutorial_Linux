@@ -158,10 +158,10 @@ void EXTI15_10_IRQHandler(void) {
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
 }
 
-void USART1_IRQHandler(void) {
+/* void USART1_IRQHandler(void) {
   HAL_UART_IRQHandler(&uart1);
     
-}
+} */
 
 void USART2_IRQHandler(void) {
   HAL_UART_IRQHandler(&uart2);
@@ -173,36 +173,16 @@ void USART2_IRQHandler(void) {
 	}
 }
 
-void DMA1_Channel2_IRQHandler(void) {
-  HAL_DMA_IRQHandler(&DMA_ST);
-}
-
-void DMA1_Channel3_IRQHandler(void) {
-  HAL_DMA_IRQHandler(&DMA_ST);
-}
-
-void DMA1_Channel5_IRQHandler(void) {
-  HAL_DMA_IRQHandler(&DMA_ST);
-}
-
-void DMA1_Channel6_IRQHandler(void) {
-  HAL_DMA_IRQHandler(&uart2_dmarx_st);
-}
-
-void DMA1_Channel7_IRQHandler(void) {
-  HAL_DMA_IRQHandler(&uart2_dmatx_st);
-}
-
-void TIM1_UP_IRQHandler(void) {
-  HAL_TIM_IRQHandler(&Tim_InitStructure);
-}
-
-void TIM1_TRG_COM_IRQHandler(void) {
-  HAL_TIM_IRQHandler(&Tim_InitStructure);
-}
-
 void TIM1_CC_IRQHandler(void) {
   HAL_TIM_IRQHandler(&Tim_InitStructure);
 }
+
+void TIM1_BRK_IRQHandler(void) {
+  HAL_TIM_IRQHandler(&Tim_InitStructure);
+}
+
+/* void DMA1_Channel4_IRQHandler(void) {
+  HAL_DMA_IRQHandler(&Tim_DMA);
+} */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

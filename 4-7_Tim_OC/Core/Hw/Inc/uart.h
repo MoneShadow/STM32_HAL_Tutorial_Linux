@@ -19,7 +19,7 @@ extern uint8_t Buffer[];
 extern ring_buffer rb;
 
 void UART2_Init(void);
-void u2_prinf(char *fmt, ...);
+void u2_printf(char *fmt, ...);
 
 extern DMA_HandleTypeDef uart2_dmarx_st;
 extern DMA_HandleTypeDef uart2_dmatx_st;
