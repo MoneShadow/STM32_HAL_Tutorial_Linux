@@ -30,7 +30,7 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_Init_OP.Pulse = 400;  // CCR
     HAL_TIM_OnePulse_ConfigChannel(&Tim_InitStructure, &Tim_Init_OP, TIM_CHANNEL_2, TIM_CHANNEL_1);
 
-    HAL_TIM_OnePulse_Start(&Tim_InitStructure, TIM_CHANNEL_2);
+    HAL_TIM_OnePulse_Start_IT(&Tim_InitStructure, TIM_CHANNEL_2);
 }
 
 void HAL_TIM_OnePulse_MspInit(TIM_HandleTypeDef *htim) {
@@ -49,5 +49,28 @@ void HAL_TIM_OnePulse_MspInit(TIM_HandleTypeDef *htim) {
         GPIOA_Init_ST.Pin = GPIO_PIN_9;
         GPIOA_Init_ST.Speed = GPIO_SPEED_FREQ_LOW;
         HAL_GPIO_Init(GPIOA, &GPIOA_Init_ST);
+
+        HAL_NVIC_EnableIRQ(TIM1_CC_IRQn);
+        HAL_NVIC_SetPriority(TIM1_CC_IRQn, 3, 0);
+    }
+}
+
+volatile uint8_t IC1_Status = 0;
+/* IC_CaptureCallback */
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == TIM1) {
+        if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
+            IC1_Status = 1;
+        }
+    }
+}
+
+volatile uint8_t OC1_Status = 0;
+/* OC_CompareCallback */
+void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == TIM1) {
+        if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2) {
+            OC1_Status = 1;
+        }
     }
 }

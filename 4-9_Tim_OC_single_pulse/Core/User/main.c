@@ -13,13 +13,13 @@ int main(void) {
     Timer1_Init(1000, 36000 - 1, 0);
 
     while (1) {
-        if (__HAL_TIM_GET_FLAG(&Tim_InitStructure, TIM_FLAG_CC1)) {
-            __HAL_TIM_CLEAR_FLAG(&Tim_InitStructure, TIM_FLAG_CC1);
-            u2_printf("CC1\r\n");
+        if (IC1_Status == 1) {
+            IC1_Status = 0;
+            u2_printf("IC1\r\n");
         }
-        if (__HAL_TIM_GET_FLAG(&Tim_InitStructure, TIM_FLAG_CC2)) {
-            __HAL_TIM_CLEAR_FLAG(&Tim_InitStructure, TIM_FLAG_CC2);
-            u2_printf("CC2\r\n");
+        if (OC1_Status == 1) {
+            OC1_Status = 0;
+            u2_printf("OC1\r\n");
         }
 	}
 }
