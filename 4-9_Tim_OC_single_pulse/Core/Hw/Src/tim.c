@@ -25,12 +25,14 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_Init_OP.ICFilter = 0x8;
     Tim_Init_OP.ICPolarity = TIM_ICPOLARITY_RISING;
     Tim_Init_OP.OCPolarity = TIM_OCPOLARITY_LOW;
+    Tim_Init_OP.OCNPolarity = TIM_OCNPOLARITY_LOW;
     Tim_Init_OP.ICSelection = TIM_ICSELECTION_DIRECTTI;
     Tim_Init_OP.OCMode = TIM_OCMODE_PWM1;
     Tim_Init_OP.Pulse = 400;  // CCR
     HAL_TIM_OnePulse_ConfigChannel(&Tim_InitStructure, &Tim_Init_OP, TIM_CHANNEL_2, TIM_CHANNEL_1);
 
     HAL_TIM_OnePulse_Start_IT(&Tim_InitStructure, TIM_CHANNEL_2);
+    HAL_TIMEx_OnePulseN_Start(&Tim_InitStructure, TIM_CHANNEL_2);
 }
 
 void HAL_TIM_OnePulse_MspInit(TIM_HandleTypeDef *htim) {
@@ -38,6 +40,7 @@ void HAL_TIM_OnePulse_MspInit(TIM_HandleTypeDef *htim) {
 
     if (htim->Instance == TIM1) {
         __HAL_RCC_GPIOA_CLK_ENABLE();
+        __HAL_RCC_GPIOB_CLK_ENABLE();
         __HAL_RCC_TIM1_CLK_ENABLE();
 
         GPIOA_Init_ST.Mode = GPIO_MODE_INPUT;
@@ -49,6 +52,11 @@ void HAL_TIM_OnePulse_MspInit(TIM_HandleTypeDef *htim) {
         GPIOA_Init_ST.Pin = GPIO_PIN_9;
         GPIOA_Init_ST.Speed = GPIO_SPEED_FREQ_LOW;
         HAL_GPIO_Init(GPIOA, &GPIOA_Init_ST);
+
+        GPIOA_Init_ST.Mode = GPIO_MODE_AF_PP;
+        GPIOA_Init_ST.Pin = GPIO_PIN_14;
+        GPIOA_Init_ST.Speed = GPIO_SPEED_FREQ_LOW;
+        HAL_GPIO_Init(GPIOB, &GPIOA_Init_ST);
 
         HAL_NVIC_EnableIRQ(TIM1_CC_IRQn);
         HAL_NVIC_SetPriority(TIM1_CC_IRQn, 3, 0);
