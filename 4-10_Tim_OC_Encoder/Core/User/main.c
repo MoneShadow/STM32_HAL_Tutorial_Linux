@@ -10,16 +10,9 @@ int main(void) {
     HAL_Init();
     RCC_InitClock();
     UART2_Init();
-    Timer1_Init(1000, 36000 - 1, 0);
+    Timer1_Init(0xFFFF, 1 - 1, 0);
 
     while (1) {
-        if (IC1_Status == 1) {
-            IC1_Status = 0;
-            u2_printf("IC1\r\n");
-        }
-        if (OC1_Status == 1) {
-            OC1_Status = 0;
-            u2_printf("OC1\r\n");
-        }
+        
 	}
 }
