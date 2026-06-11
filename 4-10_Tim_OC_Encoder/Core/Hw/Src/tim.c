@@ -9,7 +9,7 @@
 #include "uart.h"
 
 TIM_HandleTypeDef Tim_InitStructure;
-TIM_OnePulse_InitTypeDef Tim_Init_OP;
+TIM_Encoder_InitTypeDef Tim_Init_EC;
 
 void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_InitStructure.Instance = TIM1;
@@ -19,23 +19,23 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_InitStructure.Init.Period = arr;
     Tim_InitStructure.Init.Prescaler = psc;
     Tim_InitStructure.Init.RepetitionCounter = rep;
-    HAL_TIM_OnePulse_Init(&Tim_InitStructure, TIM_OPMODE_SINGLE);
+
+    Tim_Init_EC.EncoderMode = TIM_ENCODERMODE_TI2;
+    Tim_Init_EC.IC1Filter = 0xF;
+    Tim_Init_EC.IC1Polarity = TIM_ICPOLARITY_RISING;
+    Tim_Init_EC.IC1Prescaler = TIM_ICPSC_DIV1;
+    Tim_Init_EC.IC1Selection = TIM_ICSELECTION_DIRECTTI;
+    // Tim_Init_EC.IC2Filter = 0xF;
+    // Tim_Init_EC.IC2Polarity = TIM_ICPOLARITY_RISING;
+    // Tim_Init_EC.IC2Prescaler = TIM_ICPSC_DIV1;
+    // Tim_Init_EC.IC2Selection = TIM_ICSELECTION_DIRECTTI;
+    HAL_TIM_Encoder_Init(&Tim_InitStructure, &Tim_Init_EC);
     __HAL_TIM_CLEAR_FLAG(&Tim_InitStructure, TIM_FLAG_UPDATE);
 
-    Tim_Init_OP.ICFilter = 0x8;
-    Tim_Init_OP.ICPolarity = TIM_ICPOLARITY_RISING;
-    Tim_Init_OP.OCPolarity = TIM_OCPOLARITY_LOW;
-    Tim_Init_OP.OCNPolarity = TIM_OCNPOLARITY_LOW;
-    Tim_Init_OP.ICSelection = TIM_ICSELECTION_DIRECTTI;
-    Tim_Init_OP.OCMode = TIM_OCMODE_PWM1;
-    Tim_Init_OP.Pulse = 400;  // CCR
-    HAL_TIM_OnePulse_ConfigChannel(&Tim_InitStructure, &Tim_Init_OP, TIM_CHANNEL_2, TIM_CHANNEL_1);
-
-    HAL_TIM_OnePulse_Start_IT(&Tim_InitStructure, TIM_CHANNEL_2);
-    HAL_TIMEx_OnePulseN_Start(&Tim_InitStructure, TIM_CHANNEL_2);
+    HAL_TIM_Encoder_Start_IT(&Tim_InitStructure, TIM_CHANNEL_1);
 }
 
-void HAL_TIM_OnePulse_MspInit(TIM_HandleTypeDef *htim) {
+void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim) {
     GPIO_InitTypeDef GPIOA_Init_ST;
 
     if (htim->Instance == TIM1) {
@@ -44,19 +44,9 @@ void HAL_TIM_OnePulse_MspInit(TIM_HandleTypeDef *htim) {
         __HAL_RCC_TIM1_CLK_ENABLE();
 
         GPIOA_Init_ST.Mode = GPIO_MODE_INPUT;
-        GPIOA_Init_ST.Pin = GPIO_PIN_8;
+        GPIOA_Init_ST.Pin = GPIO_PIN_8 | GPIO_PIN_9;
         GPIOA_Init_ST.Pull = GPIO_PULLDOWN;
         HAL_GPIO_Init(GPIOA, &GPIOA_Init_ST);
-
-        GPIOA_Init_ST.Mode = GPIO_MODE_AF_PP;
-        GPIOA_Init_ST.Pin = GPIO_PIN_9;
-        GPIOA_Init_ST.Speed = GPIO_SPEED_FREQ_LOW;
-        HAL_GPIO_Init(GPIOA, &GPIOA_Init_ST);
-
-        GPIOA_Init_ST.Mode = GPIO_MODE_AF_PP;
-        GPIOA_Init_ST.Pin = GPIO_PIN_14;
-        GPIOA_Init_ST.Speed = GPIO_SPEED_FREQ_LOW;
-        HAL_GPIO_Init(GPIOB, &GPIOA_Init_ST);
 
         HAL_NVIC_EnableIRQ(TIM1_CC_IRQn);
         HAL_NVIC_SetPriority(TIM1_CC_IRQn, 3, 0);
