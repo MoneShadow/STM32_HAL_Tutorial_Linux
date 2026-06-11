@@ -20,19 +20,19 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_InitStructure.Init.Prescaler = psc;
     Tim_InitStructure.Init.RepetitionCounter = rep;
 
-    Tim_Init_EC.EncoderMode = TIM_ENCODERMODE_TI2;
+    Tim_Init_EC.EncoderMode = TIM_ENCODERMODE_TI12;
     Tim_Init_EC.IC1Filter = 0xF;
     Tim_Init_EC.IC1Polarity = TIM_ICPOLARITY_RISING;
     Tim_Init_EC.IC1Prescaler = TIM_ICPSC_DIV1;
     Tim_Init_EC.IC1Selection = TIM_ICSELECTION_DIRECTTI;
-    // Tim_Init_EC.IC2Filter = 0xF;
-    // Tim_Init_EC.IC2Polarity = TIM_ICPOLARITY_RISING;
-    // Tim_Init_EC.IC2Prescaler = TIM_ICPSC_DIV1;
-    // Tim_Init_EC.IC2Selection = TIM_ICSELECTION_DIRECTTI;
+    Tim_Init_EC.IC2Filter = 0xF;
+    Tim_Init_EC.IC2Polarity = TIM_ICPOLARITY_RISING;
+    Tim_Init_EC.IC2Prescaler = TIM_ICPSC_DIV1;
+    Tim_Init_EC.IC2Selection = TIM_ICSELECTION_DIRECTTI;
     HAL_TIM_Encoder_Init(&Tim_InitStructure, &Tim_Init_EC);
     __HAL_TIM_CLEAR_FLAG(&Tim_InitStructure, TIM_FLAG_UPDATE);
 
-    HAL_TIM_Encoder_Start_IT(&Tim_InitStructure, TIM_CHANNEL_1);
+    HAL_TIM_Encoder_Start_IT(&Tim_InitStructure, TIM_CHANNEL_ALL);
 }
 
 void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim) {
@@ -53,22 +53,38 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim) {
     }
 }
 
-volatile uint8_t IC1_Status = 0;
+volatile int16_t num;
+
 /* IC_CaptureCallback */
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
     if (htim->Instance == TIM1) {
+        int16_t current = (int16_t)__HAL_TIM_GET_COUNTER(&Tim_InitStructure) / 4;
+
+        /* Only report when the scaled counter value actually changes */
+        if (current == num) {
+            return;
+        }
+
         if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
-            IC1_Status = 1;
+            if (!(__HAL_TIM_IS_TIM_COUNTING_DOWN(htim))) {
+                num = current;
+                u2_printf("clockwise: %d\r\n", num);
+            }
+        }
+        else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2) {
+            if (__HAL_TIM_IS_TIM_COUNTING_DOWN(htim)) {
+                num = current;
+                u2_printf("anticlockwise: %d\r\n", num);
+            }
         }
     }
 }
 
-volatile uint8_t OC1_Status = 0;
 /* OC_CompareCallback */
 void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim) {
     if (htim->Instance == TIM1) {
         if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2) {
-            OC1_Status = 1;
+            
         }
     }
 }
