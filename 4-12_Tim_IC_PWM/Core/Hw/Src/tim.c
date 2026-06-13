@@ -8,75 +8,57 @@
 #include "tim.h"
 #include "uart.h"
 
-TIM_HandleTypeDef Tim_InitStructure;
-TIM_OC_InitTypeDef Tim_Init_OC_PWM;
-TIM_ClearInputConfigTypeDef Tim_Init_IC_BK;
+TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim2;
+TIM_IC_InitTypeDef Tim_Init_IC_PWM;
+TIM_SlaveConfigTypeDef Tim_Init_Slave;
+
+TIM_OC_InitTypeDef Tim_Init_PWM;
 
 void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
-    Tim_InitStructure.Instance = TIM1;
-    Tim_InitStructure.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    Tim_InitStructure.Init.CounterMode = TIM_COUNTERMODE_UP;
-    Tim_InitStructure.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-    Tim_InitStructure.Init.Period = arr;
-    Tim_InitStructure.Init.Prescaler = psc;
-    Tim_InitStructure.Init.RepetitionCounter = rep;
-    HAL_TIM_PWM_Init(&Tim_InitStructure);
-    __HAL_TIM_CLEAR_FLAG(&Tim_InitStructure, TIM_FLAG_UPDATE);
+    htim1.Instance = TIM1;
+    htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+    htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
+    htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+    htim1.Init.Period = arr;
+    htim1.Init.Prescaler = psc;
+    htim1.Init.RepetitionCounter = rep;
+    HAL_TIM_IC_Init(&htim1);
+    __HAL_TIM_CLEAR_FLAG(&htim1, TIM_FLAG_UPDATE);
 
-    Tim_Init_OC_PWM.OCFastMode = TIM_OCFAST_DISABLE;
-    Tim_Init_OC_PWM.OCMode = TIM_OCMODE_PWM1;
-    Tim_Init_OC_PWM.OCPolarity = TIM_OCPOLARITY_HIGH;
-    Tim_Init_OC_PWM.Pulse = 200;
-    HAL_TIM_PWM_ConfigChannel(&Tim_InitStructure, &Tim_Init_OC_PWM, TIM_CHANNEL_1);
+    Tim_Init_IC_PWM.ICFilter = 0x8;
+    Tim_Init_IC_PWM.ICPolarity = TIM_ICPOLARITY_RISING;
+    Tim_Init_IC_PWM.ICPrescaler = TIM_ICPSC_DIV1;
+    Tim_Init_IC_PWM.ICSelection = TIM_ICSELECTION_DIRECTTI;
+    HAL_TIM_IC_ConfigChannel(&htim1, &Tim_Init_IC_PWM, TIM_CHANNEL_1);
 
-    Tim_Init_OC_PWM.OCFastMode = TIM_OCFAST_DISABLE;
-    Tim_Init_OC_PWM.OCMode = TIM_OCMODE_PWM1;
-    Tim_Init_OC_PWM.OCPolarity = TIM_OCPOLARITY_LOW;
-    Tim_Init_OC_PWM.Pulse = 400;
-    HAL_TIM_PWM_ConfigChannel(&Tim_InitStructure, &Tim_Init_OC_PWM, TIM_CHANNEL_2);
+    Tim_Init_IC_PWM.ICFilter = 0x8;
+    Tim_Init_IC_PWM.ICPolarity = TIM_ICPOLARITY_FALLING;
+    Tim_Init_IC_PWM.ICPrescaler = TIM_ICPSC_DIV1;
+    Tim_Init_IC_PWM.ICSelection = TIM_ICSELECTION_INDIRECTTI;
+    HAL_TIM_IC_ConfigChannel(&htim1, &Tim_Init_IC_PWM, TIM_CHANNEL_2);
 
-    Tim_Init_OC_PWM.OCFastMode = TIM_OCFAST_DISABLE;
-    Tim_Init_OC_PWM.OCMode = TIM_OCMODE_PWM1;
-    Tim_Init_OC_PWM.OCPolarity = TIM_OCPOLARITY_HIGH;
-    Tim_Init_OC_PWM.Pulse = 600;
-    HAL_TIM_PWM_ConfigChannel(&Tim_InitStructure, &Tim_Init_OC_PWM, TIM_CHANNEL_3);
+    Tim_Init_Slave.SlaveMode = TIM_SLAVEMODE_RESET;
+    Tim_Init_Slave.InputTrigger = TIM_TS_TI1FP1;
+    Tim_Init_Slave.TriggerFilter = 0x8;
+    // Tim_Init_Slave.TriggerPolarity = TIM_TRIGGERPOLARITY_NONINVERTED; // 外部触发极性 只对ETR通道生效
+    Tim_Init_Slave.TriggerPrescaler = TIM_TRIGGERPRESCALER_DIV1;
+    HAL_TIM_SlaveConfigSynchro(&htim1, &Tim_Init_Slave);
 
-    Tim_Init_OC_PWM.OCFastMode = TIM_OCFAST_DISABLE;
-    Tim_Init_OC_PWM.OCMode = TIM_OCMODE_PWM1;
-    Tim_Init_OC_PWM.OCPolarity = TIM_OCPOLARITY_LOW;
-    Tim_Init_OC_PWM.Pulse = 800;
-    HAL_TIM_PWM_ConfigChannel(&Tim_InitStructure, &Tim_Init_OC_PWM, TIM_CHANNEL_4);
-
-    Tim_Init_IC_BK.ClearInputFilter = 0xF;
-    Tim_Init_IC_BK.ClearInputSource = TIM_CLEARINPUTSOURCE_ETR;
-    Tim_Init_IC_BK.ClearInputState = ENABLE;
-    // Tim_Init_IC_BK.ClearInputPolarity = TIM_CLEARINPUTPOLARITY_NONINVERTED; // 高电平触发
-    Tim_Init_IC_BK.ClearInputPolarity = TIM_CLEARINPUTPOLARITY_INVERTED;    // 低电平触发
-    Tim_Init_IC_BK.ClearInputPrescaler = 0;
-    HAL_TIM_ConfigOCrefClear(&Tim_InitStructure, &Tim_Init_IC_BK, TIM_CHANNEL_1);
-    HAL_TIM_ConfigOCrefClear(&Tim_InitStructure, &Tim_Init_IC_BK, TIM_CHANNEL_3);
-
-    HAL_TIM_PWM_Start_IT(&Tim_InitStructure, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Start_IT(&Tim_InitStructure, TIM_CHANNEL_2);
-    HAL_TIM_PWM_Start_IT(&Tim_InitStructure, TIM_CHANNEL_3);
-    HAL_TIM_PWM_Start_IT(&Tim_InitStructure, TIM_CHANNEL_4);
+    HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
+    HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_2);
 }
 
-void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
+void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim) {
     GPIO_InitTypeDef GPIO_Init_ST;
 
     if (htim->Instance == TIM1) {
         __HAL_RCC_GPIOA_CLK_ENABLE();
         __HAL_RCC_TIM1_CLK_ENABLE();
 
-        GPIO_Init_ST.Mode = GPIO_MODE_AF_PP;
-        GPIO_Init_ST.Pin = GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11;
-        GPIO_Init_ST.Speed = GPIO_SPEED_FREQ_LOW;
-        HAL_GPIO_Init(GPIOA, &GPIO_Init_ST);
-
         GPIO_Init_ST.Mode = GPIO_MODE_INPUT;
-        GPIO_Init_ST.Pin = GPIO_PIN_12;
-        GPIO_Init_ST.Pull = GPIO_PULLUP;
+        GPIO_Init_ST.Pin = GPIO_PIN_8;
+        GPIO_Init_ST.Pull = GPIO_PULLDOWN;
         HAL_GPIO_Init(GPIOA, &GPIO_Init_ST);
 
         HAL_NVIC_EnableIRQ(TIM1_CC_IRQn);
@@ -84,20 +66,50 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
     }
 }
 
-/* OC_CompareCallback */
-void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim) {
+void Timer2_Init(uint16_t arr, uint16_t psc) {
+    htim2.Instance = TIM2;
+    htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+    htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+    htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+    htim2.Init.Period = arr;
+    htim2.Init.Prescaler = psc;
+    HAL_TIM_PWM_Init(&htim2);
+    __HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_UPDATE);
+
+    Tim_Init_PWM.OCFastMode = TIM_OCFAST_DISABLE;
+    Tim_Init_PWM.OCMode = TIM_OCMODE_PWM2;          // PWM1 小于输出有效电平 PWM2 小于输出无效电平
+    Tim_Init_PWM.OCPolarity = TIM_OCPOLARITY_HIGH;
+    Tim_Init_PWM.Pulse = 600;
+    HAL_TIM_PWM_ConfigChannel(&htim2, &Tim_Init_PWM, TIM_CHANNEL_1);
+
+    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+}
+
+void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
+    GPIO_InitTypeDef GPIO_Init_ST;
+
+    if (htim->Instance == TIM2) {
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+        __HAL_RCC_TIM2_CLK_ENABLE();
+
+        GPIO_Init_ST.Mode = GPIO_MODE_AF_PP;
+        GPIO_Init_ST.Pin = GPIO_PIN_0;
+        GPIO_Init_ST.Speed = GPIO_SPEED_FREQ_MEDIUM;
+        HAL_GPIO_Init(GPIOA, &GPIO_Init_ST);
+    }
+}
+
+uint32_t volatile CCR1;
+uint32_t volatile CCR2;
+uint8_t volatile state = 0;
+
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
     if (htim->Instance == TIM1) {
         if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
-            
-        }
-        else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2) {
-            
-        }
-        else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_3) {
-            
-        }
-        else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_4) {
-            
+            // 需要捕获CCR1周期 CCR2高电平占时 占空比CCR2/CCR1 周期CCR1*计时一个数所用的时间 频率周期的倒数
+            CCR1 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
+            CCR2 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_2);
+            state++;
         }
     }
 }
