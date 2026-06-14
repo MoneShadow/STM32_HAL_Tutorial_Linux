@@ -23,7 +23,8 @@
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_it.h"
 #include "uart.h"  
-#include "tim.h"
+#include "tim.h" 
+#include "adc.h" 
 
 /** @addtogroup STM32F1xx_HAL_Examples
   * @{
@@ -175,6 +176,10 @@ void USART2_IRQHandler(void) {
 
 void TIM1_CC_IRQHandler(void) {
   HAL_TIM_IRQHandler(&Tim_InitStructure);
+}
+
+void ADC1_2_IRQHandler(void) {
+  HAL_ADC_IRQHandler(&hadc1);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
