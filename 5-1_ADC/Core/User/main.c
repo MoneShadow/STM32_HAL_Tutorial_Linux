@@ -10,31 +10,31 @@
 int main(void) {
     HAL_Init();
     RCC_InitClock();
-    UART2_Init();
+    UART1_Init();
     ADC_Init();
 
     while (1) {
         if (hadc1_dma1_tx_state > 0) {
             hadc1_dma1_tx_state--;
-            for (uint8_t i = 0; i < 8; i++) {
-                u2_printf("ADC1_IN%d: %d.%03d v\r\n", i + 1, (((adc1_dmabuffer[i]) * 3300) / 4095) / 1000, (((adc1_dmabuffer[i]) * 3300) / 4095) % 1000);
+            for (uint8_t i = 0; i < 10; i++) {
+                u1_printf("ADC1_IN%d: %d.%03d v\r\n", i + 1, (((adc1_dmabuffer[i]) * 3300) / 4095) / 1000, (((adc1_dmabuffer[i]) * 3300) / 4095) % 1000);
             }
         }
         if (tim1_cc_state > 0) {
             tim1_cc_state--;
-            u2_printf("Transfer!!!\r\n");
+            u1_printf("Transfer!!!\r\n");
         }
         if (htim3_update_state > 0) {
             htim3_update_state--;
-            u2_printf("Tim3: Update!!!\r\n");
+            u1_printf("Tim3: Update!!!\r\n");
         }
         if (htim3_cc_state > 0) {
             htim3_cc_state--;
-            u2_printf("Tim3: IC1!!!\r\n");
+            u1_printf("Tim3: IC1!!!\r\n");
         }
         if (hadc1_gpioa_exti11_state > 0) {
             hadc1_gpioa_exti11_state--;
-            u2_printf("EXTI11!!!\r\n");
+            u1_printf("EXTI11!!!\r\n");
         }
     }
 }

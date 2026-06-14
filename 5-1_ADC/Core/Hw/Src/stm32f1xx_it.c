@@ -159,17 +159,22 @@ void EXTI15_10_IRQHandler(void) {
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
 }
 
-/* void USART1_IRQHandler(void) {
+void USART1_IRQHandler(void) {
   HAL_UART_IRQHandler(&uart1);
-    
-} */
+
+  if (__HAL_UART_GET_FLAG(&uart1, UART_FLAG_IDLE)) {
+		__HAL_UART_CLEAR_IDLEFLAG(&uart1);
+    count1 = (uart1.RxXferSize - __HAL_DMA_GET_COUNTER(&uart1_dmarx_st));
+		HAL_UART_AbortReceive_IT(&uart1);
+	}
+}
 
 void USART2_IRQHandler(void) {
   HAL_UART_IRQHandler(&uart2);
 
   if (__HAL_UART_GET_FLAG(&uart2, UART_FLAG_IDLE)) {
 		__HAL_UART_CLEAR_IDLEFLAG(&uart2);
-    count = (uart2.RxXferSize - __HAL_DMA_GET_COUNTER(&uart2_dmarx_st));
+    count2 = (uart2.RxXferSize - __HAL_DMA_GET_COUNTER(&uart2_dmarx_st));
 		HAL_UART_AbortReceive_IT(&uart2);
 	}
 }
