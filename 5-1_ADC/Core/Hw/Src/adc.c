@@ -1,4 +1,5 @@
 #include "stm32f103xb.h"
+#include "stm32f1xx.h"
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_hal_adc.h"
 #include "stm32f1xx_hal_adc_ex.h"
@@ -6,6 +7,7 @@
 #include "stm32f1xx_hal_dma.h"
 #include "stm32f1xx_hal_gpio.h"
 #include "uart.h"
+#include "tim.h"
 #include <stdint.h>
 #include "adc.h"
 
@@ -16,10 +18,12 @@ DMA_HandleTypeDef hadc1_dma1;
 uint16_t adc1_dmabuffer[10];
 
 void ADC_Init(void) {
+    Timer1_Init(200 - 1, 7200 - 1, 0); // 0.2s/周期
+
     hadc1.Instance = ADC1;
-    hadc1.Init.ContinuousConvMode = ENABLE;
+    hadc1.Init.ContinuousConvMode = DISABLE;
     hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-    hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+    hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T1_CC1;
     hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
     HAL_ADC_Init(&hadc1);
 

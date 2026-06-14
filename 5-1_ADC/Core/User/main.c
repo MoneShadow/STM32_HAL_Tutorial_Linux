@@ -15,7 +15,12 @@ int main(void) {
 
     while (1) {
         if (hadc1_dma1_tx_state > 0) {
-            u2_printf("ADC1_IN1: %d.%03d\r\n", (((sum / 10) * 3300) / 4095) / 1000, (((sum / 10) * 3300) / 4095) % 1000);
+            hadc1_dma1_tx_state--;
+            u2_printf("ADC1_IN1: %d.%03d v\r\n", (((sum / 10) * 3300) / 4095) / 1000, (((sum / 10) * 3300) / 4095) % 1000);
+        }
+        if (tim1_cc_state > 0) {
+            tim1_cc_state--;
+            u2_printf("Transfer!!!\r\n");
         }
     }
 }
