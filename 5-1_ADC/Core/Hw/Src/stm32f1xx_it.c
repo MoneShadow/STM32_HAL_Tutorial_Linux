@@ -151,9 +151,9 @@ void SysTick_Handler(void)
 /*  file (startup_stm32f1xx.s).                                               */
 /******************************************************************************/
 
-void EXTI1_IRQHandler(void) {
-	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
-}
+// void EXTI1_IRQHandler(void) {
+// 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
+// }
 
 void EXTI15_10_IRQHandler(void) {
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);

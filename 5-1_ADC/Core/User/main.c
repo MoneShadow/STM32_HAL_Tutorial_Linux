@@ -30,5 +30,9 @@ int main(void) {
             htim3_cc_state--;
             u2_printf("Tim3: IC1!!!\r\n");
         }
+        if (hadc1_gpioa_exti11_state > 0) {
+            hadc1_gpioa_exti11_state--;
+            u2_printf("EXTI11!!!\r\n");
+        }
     }
 }

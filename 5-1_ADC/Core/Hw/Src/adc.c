@@ -19,12 +19,12 @@ uint16_t adc1_dmabuffer[10];
 
 void ADC_Init(void) {
     // Timer1_Init(200 - 1, 7200 - 1, 0);  // 0.02s/周期
-    Timer3_Init(2000 - 1, 7200 - 1); // 0.2s/周期
+    // Timer3_Init(2000 - 1, 7200 - 1); // 0.2s/周期
 
     hadc1.Instance = ADC1;
-    hadc1.Init.ContinuousConvMode = DISABLE;
+    hadc1.Init.ContinuousConvMode = ENABLE;
     hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-    hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T3_TRGO;
+    hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_EXT_IT11;
     hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
     HAL_ADC_Init(&hadc1);
 
@@ -48,6 +48,14 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc) {
         hgpioa.Pin = GPIO_PIN_0;
         HAL_GPIO_Init(GPIOA, &hgpioa);
 
+        hgpioa.Mode = GPIO_MODE_IT_RISING;
+        hgpioa.Pin = GPIO_PIN_11;
+        hgpioa.Pull = GPIO_PULLDOWN;
+        HAL_GPIO_Init(GPIOA, &hgpioa);
+
+        HAL_NVIC_SetPriority(EXTI15_10_IRQn, 4, 0);
+        HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+
         hadc1_dma1.Instance = DMA1_Channel1;
         hadc1_dma1.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
         hadc1_dma1.Init.MemInc = DMA_MINC_ENABLE;
@@ -69,10 +77,20 @@ uint8_t volatile hadc1_dma1_tx_state = 0;
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
     if (hadc->Instance == ADC1) {
+        hadc1.Instance->CR2 &= ~ADC_CR2_CONT;
         sum = 0;
         for (uint16_t i = 0; i < 10; i++) {
             sum += adc1_dmabuffer[i];
         }
         hadc1_dma1_tx_state++;
+        hadc1.Instance->CR2 |= ADC_CR2_CONT;
+    }
+}
+
+uint8_t volatile hadc1_gpioa_exti11_state = 0;
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+    if (GPIO_Pin == GPIO_PIN_11) {
+        hadc1_gpioa_exti11_state++;
     }
 }

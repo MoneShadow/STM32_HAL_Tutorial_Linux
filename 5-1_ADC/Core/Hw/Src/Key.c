@@ -67,30 +67,30 @@ void Key_Init_IT(Key_Mode Mode) {
 
 }
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-	uint32_t i = 0;
-	if (GPIO_Pin == GPIO_PIN_1) {
-		if (!Key1_Val) {
-			for ( ; i < 0xFFFFF; i++)
-				if (Key1_Val) return;
-			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_1);
-		}
-		else if (Key1_Val) {
-			for ( ; i < 0xFFFFF; i++)
-				if (!Key1_Val) return;
-			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_1);
-		}
-	}
-	else if (GPIO_Pin == GPIO_PIN_11) {
-		if (!Key11_Val) {
-			for ( ; i < 0xFFF; i++)
-				if (Key11_Val) return;
-			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_1);
-		}
-		else if (Key11_Val) {
-			for ( ; i < 0xFFF; i++)
-				if (!Key11_Val) return;
-			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_1);
-		}
-	}
-}
+// void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+// 	uint32_t i = 0;
+// 	if (GPIO_Pin == GPIO_PIN_1) {
+// 		if (!Key1_Val) {
+// 			for ( ; i < 0xFFFFF; i++)
+// 				if (Key1_Val) return;
+// 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_1);
+// 		}
+// 		else if (Key1_Val) {
+// 			for ( ; i < 0xFFFFF; i++)
+// 				if (!Key1_Val) return;
+// 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_1);
+// 		}
+// 	}
+// 	else if (GPIO_Pin == GPIO_PIN_11) {
+// 		if (!Key11_Val) {
+// 			for ( ; i < 0xFFF; i++)
+// 				if (Key11_Val) return;
+// 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_1);
+// 		}
+// 		else if (Key11_Val) {
+// 			for ( ; i < 0xFFF; i++)
+// 				if (!Key11_Val) return;
+// 			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_1);
+// 		}
+// 	}
+// }
