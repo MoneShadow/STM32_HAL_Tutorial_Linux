@@ -22,5 +22,9 @@ int main(void) {
             tim1_cc_state--;
             u2_printf("Transfer!!!\r\n");
         }
+        if (htim3_update_state > 0) {
+            htim3_update_state--;
+            u2_printf("Tim3: Update!!!\r\n");
+        }
     }
 }

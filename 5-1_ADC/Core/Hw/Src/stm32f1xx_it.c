@@ -182,4 +182,8 @@ void DMA1_Channel1_IRQHandler(void) {
   HAL_DMA_IRQHandler(hadc1.DMA_Handle);
 }
 
+void TIM3_IRQHandler(void) {
+  HAL_TIM_IRQHandler(&htim3);
+}
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

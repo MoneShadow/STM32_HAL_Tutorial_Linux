@@ -18,12 +18,13 @@ DMA_HandleTypeDef hadc1_dma1;
 uint16_t adc1_dmabuffer[10];
 
 void ADC_Init(void) {
-    Timer1_Init(200 - 1, 7200 - 1, 0); // 0.2s/周期
+    // Timer1_Init(200 - 1, 7200 - 1, 0);  // 0.02s/周期
+    Timer3_Init(2000 - 1, 7200 - 1); // 0.2s/周期
 
     hadc1.Instance = ADC1;
     hadc1.Init.ContinuousConvMode = DISABLE;
     hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-    hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T1_CC1;
+    hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T3_TRGO;
     hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
     HAL_ADC_Init(&hadc1);
 
