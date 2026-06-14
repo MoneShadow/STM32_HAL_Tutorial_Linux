@@ -26,5 +26,9 @@ int main(void) {
             htim3_update_state--;
             u2_printf("Tim3: Update!!!\r\n");
         }
+        if (htim3_cc_state > 0) {
+            htim3_cc_state--;
+            u2_printf("Tim3: IC1!!!\r\n");
+        }
     }
 }
