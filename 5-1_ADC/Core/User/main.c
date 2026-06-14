@@ -16,7 +16,9 @@ int main(void) {
     while (1) {
         if (hadc1_dma1_tx_state > 0) {
             hadc1_dma1_tx_state--;
-            u2_printf("ADC1_IN1: %d.%03d v\r\n", (((sum / 10) * 3300) / 4095) / 1000, (((sum / 10) * 3300) / 4095) % 1000);
+            for (uint8_t i = 0; i < 8; i++) {
+                u2_printf("ADC1_IN%d: %d.%03d v\r\n", i + 1, (((adc1_dmabuffer[i]) * 3300) / 4095) / 1000, (((adc1_dmabuffer[i]) * 3300) / 4095) % 1000);
+            }
         }
         if (tim1_cc_state > 0) {
             tim1_cc_state--;
