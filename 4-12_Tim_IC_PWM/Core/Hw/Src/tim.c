@@ -12,8 +12,13 @@ TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_IC_InitTypeDef Tim_Init_IC_PWM;
 TIM_SlaveConfigTypeDef Tim_Init_Slave;
+DMA_HandleTypeDef Tim_Init_DMA_IC1;
+DMA_HandleTypeDef Tim_Init_DMA_IC2;
 
 TIM_OC_InitTypeDef Tim_Init_PWM;
+
+uint16_t dma_buffer_ic1[10];
+uint16_t dma_buffer_ic2[10];
 
 void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     htim1.Instance = TIM1;
@@ -45,8 +50,9 @@ void Timer1_Init(uint16_t arr, uint16_t psc, uint8_t rep) {
     Tim_Init_Slave.TriggerPrescaler = TIM_TRIGGERPRESCALER_DIV1;
     HAL_TIM_SlaveConfigSynchro(&htim1, &Tim_Init_Slave);
 
-    HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
-    HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_2);
+    HAL_TIM_IC_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)dma_buffer_ic1, 10);
+    htim1.State = HAL_TIM_STATE_READY;
+    HAL_TIM_IC_Start_DMA(&htim1, TIM_CHANNEL_2, (uint32_t *)dma_buffer_ic2, 10);
 }
 
 void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim) {
@@ -55,14 +61,40 @@ void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim) {
     if (htim->Instance == TIM1) {
         __HAL_RCC_GPIOA_CLK_ENABLE();
         __HAL_RCC_TIM1_CLK_ENABLE();
+        __HAL_RCC_DMA1_CLK_ENABLE();
 
         GPIO_Init_ST.Mode = GPIO_MODE_INPUT;
         GPIO_Init_ST.Pin = GPIO_PIN_8;
         GPIO_Init_ST.Pull = GPIO_PULLDOWN;
         HAL_GPIO_Init(GPIOA, &GPIO_Init_ST);
 
-        HAL_NVIC_EnableIRQ(TIM1_CC_IRQn);
-        HAL_NVIC_SetPriority(TIM1_CC_IRQn, 3, 0);
+        Tim_Init_DMA_IC1.Instance = DMA1_Channel2;
+        Tim_Init_DMA_IC1.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
+        Tim_Init_DMA_IC1.Init.MemInc = DMA_MINC_ENABLE;
+        Tim_Init_DMA_IC1.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+        Tim_Init_DMA_IC1.Init.PeriphInc = DMA_PINC_DISABLE;
+        Tim_Init_DMA_IC1.Init.Direction = DMA_PERIPH_TO_MEMORY;
+        Tim_Init_DMA_IC1.Init.Mode = DMA_CIRCULAR;
+        Tim_Init_DMA_IC1.Init.Priority = DMA_PRIORITY_MEDIUM;
+        __HAL_LINKDMA(&htim1, hdma[TIM_DMA_ID_CC1], Tim_Init_DMA_IC1);
+        HAL_DMA_Init(&Tim_Init_DMA_IC1);
+
+        Tim_Init_DMA_IC2.Instance = DMA1_Channel3;
+        Tim_Init_DMA_IC2.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
+        Tim_Init_DMA_IC2.Init.MemInc = DMA_MINC_ENABLE;
+        Tim_Init_DMA_IC2.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+        Tim_Init_DMA_IC2.Init.PeriphInc = DMA_PINC_DISABLE;
+        Tim_Init_DMA_IC2.Init.Direction = DMA_PERIPH_TO_MEMORY;
+        Tim_Init_DMA_IC2.Init.Mode = DMA_CIRCULAR;
+        Tim_Init_DMA_IC2.Init.Priority = DMA_PRIORITY_MEDIUM;
+        __HAL_LINKDMA(&htim1, hdma[TIM_DMA_ID_CC2], Tim_Init_DMA_IC2);
+        HAL_DMA_Init(&Tim_Init_DMA_IC2);
+
+        HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
+        HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 3, 0);
+
+        HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
+        HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 3, 0);
     }
 }
 
@@ -99,16 +131,19 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
     }
 }
 
-uint32_t volatile CCR1;
-uint32_t volatile CCR2;
+uint32_t volatile CCR1 = 0;
+uint32_t volatile CCR2 = 0;
 uint8_t volatile state = 0;
 
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
     if (htim->Instance == TIM1) {
         if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
-            // 需要捕获CCR1周期 CCR2高电平占时 占空比CCR2/CCR1 周期CCR1*计时一个数所用的时间 频率周期的倒数
-            CCR1 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
-            CCR2 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_2);
+            CCR1 = 0;
+            CCR2 = 0;
+            for (uint16_t i = 0; i < 10; i++) {
+                CCR1 += dma_buffer_ic1[i];
+                CCR2 += dma_buffer_ic2[i];
+            }
             state++;
         }
     }

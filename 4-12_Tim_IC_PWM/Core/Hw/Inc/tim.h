@@ -3,6 +3,8 @@
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
+extern DMA_HandleTypeDef Tim_Init_DMA_IC1; 
+extern DMA_HandleTypeDef Tim_Init_DMA_IC2;
 
 extern uint32_t volatile CCR1;
 extern uint32_t volatile CCR2;
