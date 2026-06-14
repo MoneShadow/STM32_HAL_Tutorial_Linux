@@ -178,8 +178,8 @@ void TIM1_CC_IRQHandler(void) {
   HAL_TIM_IRQHandler(&Tim_InitStructure);
 }
 
-void ADC1_2_IRQHandler(void) {
-  HAL_ADC_IRQHandler(&hadc1);
+void DMA1_Channel1_IRQHandler(void) {
+  HAL_DMA_IRQHandler(hadc1.DMA_Handle);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

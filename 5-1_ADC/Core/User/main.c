@@ -14,10 +14,8 @@ int main(void) {
     ADC_Init();
 
     while (1) {
-        HAL_ADC_PollForConversion(&hadc1, 1000);
-        uint16_t adc_val = HAL_ADC_GetValue(&hadc1);
-        uint16_t mv = adc_val * 3300 / 4095;
-        u2_printf("ADC_IN: %d.%03d v\r\n", mv / 1000, mv % 1000);   // 先放整除部分，后放小数部分，但是本质还是整数运算
-        HAL_Delay(1000);
+        if (hadc1_dma1_tx_state > 0) {
+            u2_printf("ADC1_IN1: %d.%03d\r\n", (((sum / 10) * 3300) / 4095) / 1000, (((sum / 10) * 3300) / 4095) % 1000);
+        }
     }
 }
