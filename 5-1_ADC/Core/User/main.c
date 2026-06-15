@@ -16,9 +16,10 @@ int main(void) {
     while (1) {
         if (hadc1_dma1_tx_state > 0) {
             hadc1_dma1_tx_state--;
-            for (uint8_t i = 0; i < 10; i++) {
-                u1_printf("ADC1_IN%d: %d.%03d v\r\n", i, (((hadc1_sumbuffer[i]) / 10 * 3300) / 4095) / 1000, (((hadc1_sumbuffer[i]) / 10 * 3300) / 4095) % 1000);
-            }
+            // u1_printf("%d\r\n", hadc1_Dis_count);
+            u1_printf("ADC1_IN%d: %d.%03d v\r\n", (hadc1_Dis_count % 5) * 2, ((adc1_dmabuffer[0] * 3300) / 4095) / 1000, ((adc1_dmabuffer[0] * 3300) / 4095) % 1000);
+            u1_printf("ADC1_IN%d: %d.%03d v\r\n\r\n", ((hadc1_Dis_count % 5) * 2) + 1, ((adc1_dmabuffer[1] * 3300) / 4095) / 1000, ((adc1_dmabuffer[1] * 3300) / 4095) % 1000);
+            hadc1_Dis_count++;
         }
         if (tim1_cc_state > 0) {
             tim1_cc_state--;
