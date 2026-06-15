@@ -23,7 +23,8 @@
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_it.h"
 #include "uart.h"  
-#include "tim.h"
+#include "tim.h" 
+#include "adc.h" 
 
 /** @addtogroup STM32F1xx_HAL_Examples
   * @{
@@ -150,31 +151,44 @@ void SysTick_Handler(void)
 /*  file (startup_stm32f1xx.s).                                               */
 /******************************************************************************/
 
-void EXTI1_IRQHandler(void) {
-	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
-}
+// void EXTI1_IRQHandler(void) {
+// 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
+// }
 
 void EXTI15_10_IRQHandler(void) {
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
 }
 
-/* void USART1_IRQHandler(void) {
+void USART1_IRQHandler(void) {
   HAL_UART_IRQHandler(&uart1);
-    
-} */
+
+  if (__HAL_UART_GET_FLAG(&uart1, UART_FLAG_IDLE)) {
+		__HAL_UART_CLEAR_IDLEFLAG(&uart1);
+    count1 = (uart1.RxXferSize - __HAL_DMA_GET_COUNTER(&uart1_dmarx_st));
+		HAL_UART_AbortReceive_IT(&uart1);
+	}
+}
 
 void USART2_IRQHandler(void) {
   HAL_UART_IRQHandler(&uart2);
 
   if (__HAL_UART_GET_FLAG(&uart2, UART_FLAG_IDLE)) {
 		__HAL_UART_CLEAR_IDLEFLAG(&uart2);
-    count = (uart2.RxXferSize - __HAL_DMA_GET_COUNTER(&uart2_dmarx_st));
+    count2 = (uart2.RxXferSize - __HAL_DMA_GET_COUNTER(&uart2_dmarx_st));
 		HAL_UART_AbortReceive_IT(&uart2);
 	}
 }
 
 void TIM1_CC_IRQHandler(void) {
   HAL_TIM_IRQHandler(&Tim_InitStructure);
+}
+
+void DMA1_Channel1_IRQHandler(void) {
+  HAL_DMA_IRQHandler(hadc1.DMA_Handle);
+}
+
+void TIM3_IRQHandler(void) {
+  HAL_TIM_IRQHandler(&htim3);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
