@@ -19,16 +19,16 @@ uint16_t adc1_dmabuffer[100];
 uint16_t hadc1_sumbuffer[10];
 
 void ADC_Init(void) {
-    Timer1_Init(2000 - 1, 7200 - 1, 0);  // 0.2s/周期
-    // Timer3_Init(2000 - 1, 7200 - 1); // 0.2s/周期
+    // Timer1_Init(2000 - 1, 7200 - 1, 0);  // 0.2s/周期
+    Timer3_Init(200 - 1, 7200 - 1); // 0.2s/周期 TIM3_TRGO触发ADC
 
     hadc1.Instance = ADC1;
-    hadc1.Init.ContinuousConvMode = DISABLE;
+    hadc1.Init.ContinuousConvMode = ENABLE;
     hadc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
     hadc1.Init.NbrOfConversion = 10;
     hadc1.Init.DiscontinuousConvMode = DISABLE;
     hadc1.Init.NbrOfDiscConversion = 1;
-    hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T1_CC1;
+    hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T3_TRGO;
     hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
     HAL_ADC_Init(&hadc1);
 
@@ -131,6 +131,8 @@ uint8_t volatile hadc1_dma1_tx_state = 0;
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
     if (hadc->Instance == ADC1) {
+        hadc1.Instance->CR2 &= ~ADC_CR2_CONT;   // 清零连续转换位
+
         for (uint16_t j = 0; j < 10; j++) {
             sum = 0;  // 每个通道求和前清零
             for (uint16_t i = 0; i < 10; i++) {
@@ -139,6 +141,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
             hadc1_sumbuffer[j] = (uint16_t)sum;
         }
         hadc1_dma1_tx_state++;
+
+        hadc1.Instance->CR2 |= ADC_CR2_CONT;    // 置位连续转换位
     }
 }
 
@@ -147,6 +151,5 @@ uint8_t volatile hadc1_gpioa_exti11_state = 0;
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     if (GPIO_Pin == GPIO_PIN_11) {
         hadc1_gpioa_exti11_state++;
-        // hadc1.Instance->CR2 &= ~ADC_CR2_CONT;
     }
 }

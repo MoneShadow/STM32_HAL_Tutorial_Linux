@@ -3,6 +3,7 @@
 #include "stm32f1xx_hal_cortex.h"
 #include "stm32f1xx_hal_dma.h"
 #include "stm32f1xx_hal_gpio.h"
+#include "stm32f1xx_hal_gpio_ex.h"
 #include "stm32f1xx_hal_tim.h"
 #include <stdint.h>
 #include "tim.h"
@@ -45,7 +46,7 @@ void Timer3_Init(uint16_t arr, uint16_t psc) {
     __HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
 
     htim3_ic.ICFilter = 0xF;
-    htim3_ic.ICPolarity = TIM_ICPOLARITY_FALLING;
+    htim3_ic.ICPolarity = TIM_ICPOLARITY_RISING;
     htim3_ic.ICPrescaler = TIM_ICPSC_DIV1;
     htim3_ic.ICSelection = TIM_ICSELECTION_DIRECTTI;
     HAL_TIM_IC_ConfigChannel(&htim3, &htim3_ic, TIM_CHANNEL_1);
@@ -68,14 +69,27 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
 
 void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim) {
     if (htim->Instance == TIM3) {
-        __HAL_RCC_GPIOA_CLK_ENABLE();
+        // __HAL_RCC_GPIOA_CLK_ENABLE();
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        __HAL_RCC_AFIO_CLK_ENABLE();        // 开启AFIO时钟
+        __HAL_AFIO_REMAP_TIM3_PARTIAL();    // 重映射TIM3
+        __HAL_AFIO_REMAP_SWJ_NOJTAG();      // 恢复PB4引脚
         __HAL_RCC_TIM3_CLK_ENABLE();
 
         GPIO_InitTypeDef hgpioa;
         hgpioa.Mode = GPIO_MODE_INPUT;
-        hgpioa.Pin = GPIO_PIN_6;
-        hgpioa.Pull = GPIO_PULLUP;
-        HAL_GPIO_Init(GPIOA, &hgpioa);
+        hgpioa.Pin = GPIO_PIN_4;
+        hgpioa.Pull = GPIO_PULLDOWN;
+        HAL_GPIO_Init(GPIOB, &hgpioa);
+
+        HAL_NVIC_EnableIRQ(TIM3_IRQn);
+        HAL_NVIC_SetPriority(TIM3_IRQn, 3, 0);
+    }
+}
+
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == TIM3) {
+        __HAL_RCC_TIM3_CLK_ENABLE();
 
         HAL_NVIC_EnableIRQ(TIM3_IRQn);
         HAL_NVIC_SetPriority(TIM3_IRQn, 3, 0);
