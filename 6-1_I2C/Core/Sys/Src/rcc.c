@@ -19,7 +19,7 @@ void RCC_InitClock(void) {
     RCC_ClkInitStructure.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
     HAL_RCC_ClockConfig(&RCC_ClkInitStructure, FLASH_LATENCY_2);
 
-    RCC_PeriphCLKInitTypeDef PeriphCLKInit;
+    RCC_PeriphCLKInitTypeDef PeriphCLKInit = {0};
     PeriphCLKInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
     PeriphCLKInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
     HAL_RCCEx_PeriphCLKConfig(&PeriphCLKInit);
