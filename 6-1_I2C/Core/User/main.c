@@ -8,7 +8,7 @@
 #include "i2c.h"
 #include <stdint.h>
 
-int16_t arr[6];
+int16_t arr[7];
 
 int main(void) {
     HAL_Init();
@@ -19,9 +19,13 @@ int main(void) {
 
     MPU_ReadReg(arr);
 
-    for (uint8_t i = 0; i < 6; i++) {
-        u1_printf("%d\r\n", arr[i]);
-    }
+    u1_printf("AX=      %d\r\n", arr[0]);
+    u1_printf("AY=      %d\r\n", arr[1]);
+    u1_printf("AZ=      %d\r\n", arr[2]);
+    u1_printf("Temp=    %d\r\n", arr[3]);
+    u1_printf("GX=      %d\r\n", arr[4]);
+    u1_printf("GY=      %d\r\n", arr[5]);
+    u1_printf("GZ=      %d\r\n\r\n", arr[6]);
 
     while (1) {
         

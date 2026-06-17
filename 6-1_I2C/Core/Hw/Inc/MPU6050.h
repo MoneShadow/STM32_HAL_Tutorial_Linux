@@ -1,6 +1,8 @@
 #ifndef __MPU6050_H
 #define __MPU6050_H
 
+#define MPU6050_Address              0xD0
+
 #define	MPU6050_SMPLRT_DIV		0x19
 #define	MPU6050_CONFIG			0x1A
 #define	MPU6050_GYRO_CONFIG		0x1B
