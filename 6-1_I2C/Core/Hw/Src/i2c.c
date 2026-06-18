@@ -35,53 +35,71 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef *hi2c) {
 
 /* 初始化MPU6050 */
 void MPU6050_Init() {
-    uint8_t Temp[2];
+    // uint8_t Temp[2];
+    uint8_t TempData;
 
     /* 唤醒 MPU6050（退出睡眠） */
-    Temp[0] = MPU6050_PWR_MGMT_1;
-    Temp[1] = 0x01;
-    if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Address, Temp, 2, 100) != HAL_OK)
+    // Temp[0] = MPU6050_PWR_MGMT_1;
+    // Temp[1] = 0x01;
+    // if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Address, Temp, 2, 100) != HAL_OK)
+    TempData = 0x01;
+    if (HAL_I2C_Mem_Write(&hi2c1, MPU6050_Address, MPU6050_PWR_MGMT_1, I2C_MEMADD_SIZE_8BIT, &TempData, 1, 100) != HAL_OK)
         return;
 
     HAL_Delay(50);  /* 等待MPU6050内部振荡器+PLL稳定（datasheet要求~30ms） */
 
-    Temp[0] = MPU6050_PWR_MGMT_2;
-    Temp[1] = 0x00;
-    if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Address, Temp, 2, 100) != HAL_OK)
+    // Temp[0] = MPU6050_PWR_MGMT_2;
+    // Temp[1] = 0x00;
+    // if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Address, Temp, 2, 100) != HAL_OK)
+    TempData = 0x00;
+    if (HAL_I2C_Mem_Write(&hi2c1, MPU6050_Address, MPU6050_PWR_MGMT_2, I2C_MEMADD_SIZE_8BIT, &TempData, 1, 100) != HAL_OK)
         return;
 
-    Temp[0] = MPU6050_SMPLRT_DIV;
-    Temp[1] = 0x09;
-    if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Address, Temp, 2, 100) != HAL_OK)
+    // Temp[0] = MPU6050_SMPLRT_DIV;
+    // Temp[1] = 0x09;
+    // if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Address, Temp, 2, 100) != HAL_OK)
+    TempData = 0x09;
+    if (HAL_I2C_Mem_Write(&hi2c1, MPU6050_Address, MPU6050_SMPLRT_DIV, I2C_MEMADD_SIZE_8BIT, &TempData, 1, 100) != HAL_OK)
         return;
 
-    Temp[0] = MPU6050_CONFIG;
-    Temp[1] = 0x06;
-    if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Address, Temp, 2, 100) != HAL_OK)
+    // Temp[0] = MPU6050_CONFIG;
+    // Temp[1] = 0x06;
+    // if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Address, Temp, 2, 100) != HAL_OK)
+    TempData = 0x06;
+    if (HAL_I2C_Mem_Write(&hi2c1, MPU6050_Address, MPU6050_CONFIG, I2C_MEMADD_SIZE_8BIT, &TempData, 1, 100) != HAL_OK)
         return;
 
-    Temp[0] = MPU6050_GYRO_CONFIG;
-    Temp[1] = 0x18;
-    if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Address, Temp, 2, 100) != HAL_OK)
+    // Temp[0] = MPU6050_GYRO_CONFIG;
+    // Temp[1] = 0x18;
+    // if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Address, Temp, 2, 100) != HAL_OK)
+    TempData = 0x18;
+    if (HAL_I2C_Mem_Write(&hi2c1, MPU6050_Address, MPU6050_GYRO_CONFIG, I2C_MEMADD_SIZE_8BIT, &TempData, 1, 100) != HAL_OK)
         return;
 
-    Temp[0] = MPU6050_ACCEL_CONFIG;
-    Temp[1] = 0x18;
-    if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Address, Temp, 2, 100) != HAL_OK)
+    // Temp[0] = MPU6050_ACCEL_CONFIG;
+    // Temp[1] = 0x18;
+    // if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Address, Temp, 2, 100) != HAL_OK)
+    TempData = 0x18;
+    if (HAL_I2C_Mem_Write(&hi2c1, MPU6050_Address, MPU6050_ACCEL_CONFIG, I2C_MEMADD_SIZE_8BIT, &TempData, 1, 100) != HAL_OK)
         return;
 }
 
 /* 读取六轴的值 */
 void MPU_ReadReg(int16_t arr[]) {
-    uint8_t p = MPU6050_ACCEL_XOUT_H;
+    // uint8_t p = MPU6050_ACCEL_XOUT_H;
     uint8_t Temp[14] = {0};  /* 初始化为0，防止I2C失败时读到垃圾数据 */
 
-    if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Address, &p, 1, 100) != HAL_OK) {
-        for (uint8_t i = 0; i < 7; i++) arr[i] = 0;
-        return;
-    }
+    // if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Address, &p, 1, 100) != HAL_OK) {
+    //     for (uint8_t i = 0; i < 7; i++) arr[i] = 0;
+    //     return;
+    // }
 
-    if (HAL_I2C_Master_Receive(&hi2c1, MPU6050_Address, Temp, 14, 100) != HAL_OK) {
+    // if (HAL_I2C_Master_Receive(&hi2c1, MPU6050_Address, Temp, 14, 100) != HAL_OK) {
+    //     for (uint8_t i = 0; i < 7; i++) arr[i] = 0;
+    //     return;
+    // }
+
+    if (HAL_I2C_Mem_Read(&hi2c1, MPU6050_Address, MPU6050_ACCEL_XOUT_H, I2C_MEMADD_SIZE_8BIT, Temp, 14, 100) != HAL_OK) {
         for (uint8_t i = 0; i < 7; i++) arr[i] = 0;
         return;
     }
