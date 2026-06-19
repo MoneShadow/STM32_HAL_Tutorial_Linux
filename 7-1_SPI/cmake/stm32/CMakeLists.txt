@@ -38,6 +38,7 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/adc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/i2c.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/i2c_sf.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/spi.c
 )
 
 # 设置HAL库源文件/CMSIS源文件变量
@@ -57,6 +58,7 @@ set(STM32_Drivers_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc_ex.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c
     
     # ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_
     # 这里是库里的.c文件
