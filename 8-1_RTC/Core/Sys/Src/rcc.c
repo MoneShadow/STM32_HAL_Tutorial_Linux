@@ -5,7 +5,8 @@ void RCC_InitClock(void) {
     RCC_OscInitTypeDef RCC_OscInitStructure = {0};
     RCC_OscInitStructure.HSEState = RCC_HSE_ON;
     RCC_OscInitStructure.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
-    RCC_OscInitStructure.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+    RCC_OscInitStructure.OscillatorType = RCC_OSCILLATORTYPE_HSE | RCC_OSCILLATORTYPE_LSE;
+    RCC_OscInitStructure.LSEState = RCC_LSE_ON;
     RCC_OscInitStructure.PLL.PLLMUL = RCC_PLL_MUL9;
     RCC_OscInitStructure.PLL.PLLSource = RCC_PLLSOURCE_HSE;
     RCC_OscInitStructure.PLL.PLLState = RCC_PLL_ON;
@@ -20,7 +21,7 @@ void RCC_InitClock(void) {
     HAL_RCC_ClockConfig(&RCC_ClkInitStructure, FLASH_LATENCY_2);
 
     RCC_PeriphCLKInitTypeDef PeriphCLKInit;
-    PeriphCLKInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-    PeriphCLKInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
+    PeriphCLKInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+    PeriphCLKInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
     HAL_RCCEx_PeriphCLKConfig(&PeriphCLKInit);
 }
