@@ -1,0 +1,17 @@
+CompileFlags:
+  Add:
+    - '-ferror-limit=0'
+    - '-Wno-implicit-int'
+    - '-isystem'
+    - '/home/mone/tools/arm-gnu-toolchain-15.2.rel1-x86_64-arm-none-eabi/arm-none-eabi/include'
+    - '-isystem'
+    - '/home/mone/tools/arm-gnu-toolchain-15.2.rel1-x86_64-arm-none-eabi/lib/gcc/arm-none-eabi/15.2.1/include'
+    - '-isystem'
+    - '/home/mone/tools/arm-gnu-toolchain-15.2.rel1-x86_64-arm-none-eabi/lib/gcc/arm-none-eabi/15.2.1/include-fixed'
+  CompilationDatabase: build/Debug
+Diagnostics:
+  Suppress:
+    - unused-includes
+    - unknown_typename
+    - unknown_typename_suggest
+    - typename_requires_specqual
