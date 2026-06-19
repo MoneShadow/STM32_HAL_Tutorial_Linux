@@ -8,32 +8,29 @@
 #include "i2c.h"
 #include "i2c_sf.h"
 #include "MPU6050.h"
+#include "spi_sf.h"
 #include <stdint.h>
 
-int16_t arr[7];
+uint8_t TxData[8] = {0x11, 0x33, 0x55, 0x77, 0x99, 0xAA, 0xCC, 0xEE};
+uint8_t RxData[8];
 
 int main(void) {
     HAL_Init();
     RCC_InitClock();
     UART1_Init();
-    I2C1_SF_Init();
-    MPU6050_Init_SF();    
-    // I2C1_SF_Start();
-    // I2C1_SF_Transmit(MPU6050_Address);
-    // uint8_t ACK = I2C1_SF_Rceive_ACK();
-    // I2C1_SF_Stop();
+    SPI1_SF_Init();
 
-    // u1_printf("ACK: %d\r\n", ACK);
+    W25Q64_WaitBusy_SF();
+    W25Q64_Sector_Erase_SF(0x0000);
+    W25Q64_WaitBusy_SF();
+    W25Q64_Page_Program_SF(0x0000, TxData, 8);
+    W25Q64_Read_Data_SF(0x0000, RxData, 8);
 
-    MPU6050_ReadReg_SF(arr);
+    for (uint8_t i = 0; i < 8; i++) {
+        u1_printf("RxData[%d] = %x\r\n", i, RxData[i]);
+    }
 
-    u1_printf("AX=      %d\r\n", arr[0]);
-    u1_printf("AY=      %d\r\n", arr[1]);
-    u1_printf("AZ=      %d\r\n", arr[2]);
-    // u1_printf("Temp=    %d\r\n", arr[3]);
-    u1_printf("GX=      %d\r\n", arr[4]);
-    u1_printf("GY=      %d\r\n", arr[5]);
-    u1_printf("GZ=      %d\r\n\r\n", arr[6]);
+    u1_printf("\r\n");
 
     while (1) {
         
