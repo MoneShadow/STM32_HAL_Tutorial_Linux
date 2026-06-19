@@ -37,6 +37,7 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/tim.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/adc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/i2c.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/i2c_sf.c
 )
 
 # 设置HAL库源文件/CMSIS源文件变量
