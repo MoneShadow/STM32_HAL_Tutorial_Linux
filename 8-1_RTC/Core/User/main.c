@@ -27,7 +27,7 @@ int main(void) {
         if (Sec != datatime->tm_sec) {
             Sec = datatime->tm_sec;
             u1_printf("%d-%d-%d %d:%d:%d\r\n", 
-                    datatime->tm_year + 1900, datatime->tm_mon, datatime->tm_mday,
+                    datatime->tm_year + 1900, datatime->tm_mon + 1, datatime->tm_mday,
                     datatime->tm_hour, datatime->tm_min, datatime->tm_sec);
         }
     }
