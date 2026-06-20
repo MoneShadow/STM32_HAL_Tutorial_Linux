@@ -1,11 +1,15 @@
 import subprocess
+from pathlib import Path
+
+project_name = Path(__file__).resolve().parent.parent.name
+elf_path = f"build/Debug/{project_name}.elf"
 
 result = subprocess.run([
     "gdb-multiarch",
-    "build/Debug/stm32_linux_template.elf"
+    elf_path
 ])
 
-if result == 0:
-    print("Sucesess")
+if result.returncode == 0:
+    print("Success")
 else:
     print("Failed")
