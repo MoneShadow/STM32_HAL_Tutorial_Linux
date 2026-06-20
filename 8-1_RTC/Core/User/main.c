@@ -1,4 +1,3 @@
-#include "rtc.h"
 #include "stm32f1xx_hal.h"
 #include "rcc.h"
 #include "stm32f1xx_hal_gpio.h"
