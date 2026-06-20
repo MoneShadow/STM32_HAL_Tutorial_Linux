@@ -24,7 +24,8 @@
 #include "stm32f1xx_it.h"
 #include "uart.h"  
 #include "tim.h" 
-#include "adc.h" 
+#include "adc.h"
+#include "rtc.h"
 
 /** @addtogroup STM32F1xx_HAL_Examples
   * @{
@@ -189,6 +190,10 @@ void DMA1_Channel1_IRQHandler(void) {
 
 void TIM3_IRQHandler(void) {
   HAL_TIM_IRQHandler(&htim3);
+}
+
+void RTC_Alarm_IRQHandler(void) {
+  HAL_RTC_AlarmIRQHandler(&hrtc);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
