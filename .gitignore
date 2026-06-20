@@ -1,2 +1,24 @@
+# Build artifacts
 **/build/
+*.o
+*.elf
+*.hex
+*.bin
+*.map
+*.su
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+
+# Editor temp files
+*.swp
+*~
+*.swo
+.DS_Store
+Thumbs.db
+
+# GDB
 *.gdb_history
