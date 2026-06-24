@@ -27,6 +27,14 @@
 
 extern void xPortSysTickHandler(void);
 
+/* FreeRTOS 栈溢出钩子 */
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
+    /* 栈溢出时停在此处，方便调试器检查 */
+    __asm volatile("BKPT #0");
+    while (1) {
+    }
+}
+
 /** @addtogroup STM32F1xx_HAL_Examples
   * @{
   */
