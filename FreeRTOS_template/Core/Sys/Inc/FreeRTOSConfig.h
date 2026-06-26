@@ -55,10 +55,11 @@
  * frequency. */
 #define configCPU_CLOCK_HZ    ( ( unsigned long ) 72000000 )
 
-/* FreeRTOS port 层 handler 映射到 CMSIS 向量表名称 */
-#define vPortSVCHandler                         SVC_Handler
-#define xPortPendSVHandler                      PendSV_Handler
-#define xPortSysTickHandler                     SysTick_Handler  // 不要删除这行注释
+/* FreeRTOS port 层 handler 映射到 CMSIS 向量表名称
+ * SVC/PendSV: Direct Routing — FreeRTOS port.c 直接接管
+ * SysTick:   Indirect Routing — stm32f1xx_it.c 中同时喂 HAL 和 FreeRTOS */
+#define vPortSVCHandler    SVC_Handler
+#define xPortPendSVHandler PendSV_Handler
 
 /* configSYSTICK_CLOCK_HZ is an optional parameter for ARM Cortex-M ports only.
  *
@@ -82,7 +83,7 @@
 
 /* configTICK_RATE_HZ sets frequency of the tick interrupt in Hz, normally
  * calculated from the configCPU_CLOCK_HZ value. */
-#define configTICK_RATE_HZ                         100
+#define configTICK_RATE_HZ                         1000
 
 /* Set configUSE_PREEMPTION to 1 to use pre-emptive scheduling.  Set
  * configUSE_PREEMPTION to 0 to use co-operative scheduling.

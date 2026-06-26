@@ -22,6 +22,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_it.h"
+#include "FreeRTOS.h"
+#include "task.h"
+
+extern void xPortSysTickHandler(void);
    
 /** @addtogroup STM32F1xx_HAL_Examples
   * @{
@@ -139,9 +143,9 @@ void DebugMon_Handler(void)
 void SysTick_Handler(void)
 {
   HAL_IncTick();
-  // if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
-  //       xPortSysTickHandler();
-  //   }
+  if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
+      xPortSysTickHandler();
+  }
 }
 
 /******************************************************************************/
