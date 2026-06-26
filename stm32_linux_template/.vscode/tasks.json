@@ -26,19 +26,11 @@
             ]
         },
         {
-            "label": "Openocd",
+            "label": "Cls-Build",
             "type": "shell",
             "command": "python3",
             "args": [
-                ".scripts/openocd.py"
-            ]
-        },
-        {
-            "label": "GBD-Link",
-            "type": "shell",
-            "command": "python3",
-            "args": [
-                ".scripts/gdb-multiarch.py"
+                ".scripts/cls-build.py"
             ]
         }
     ]
