@@ -14,3 +14,11 @@ void LED_Init(void) {
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);
 }
+
+void LED1_Toggle(void) {
+    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_1);
+}
+
+void LED2_Toggle(void) {
+    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_2);
+}
