@@ -21,6 +21,8 @@ set(MX_Include_Dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/CMSIS/Device/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/CMSIS/Include
     # 这里按照自己后面设置项目结构进行修改
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../FreeRTOS/portable/ARM_CM3
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../FreeRTOS/include
 )
 
 # 设置应用层源文件 + MCU启动文件变量
@@ -55,6 +57,19 @@ set(MX_LINK_DIRS
     # 供以后添加第三方库用的
 )
 
+# 设置 FreeRTOS 源文件
+set(FreeRTOS_Src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../FreeRTOS/source/croutine.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../FreeRTOS/source/event_groups.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../FreeRTOS/source/list.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../FreeRTOS/source/queue.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../FreeRTOS/source/stream_buffer.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../FreeRTOS/source/tasks.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../FreeRTOS/source/timers.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../FreeRTOS/portable/MemMang/heap_4.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../FreeRTOS/portable/ARM_CM3/port.c
+)
+
 # 设置最终ELF需要链接的库变量
 set(MX_LINK_LIBS 
     STM32_Drivers
@@ -78,6 +93,9 @@ target_link_libraries(STM32_Drivers PUBLIC stm32_conf)
 
 # 给项目(即最终的ELF文件)添加应用层源文件
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${MX_Application_Src})
+
+# 给项目添加 FreeRTOS 源文件
+target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${FreeRTOS_Src})
 
 # 添加外部库搜索路径 供链接阶段查找 .a/.so 文件
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE ${MX_LINK_DIRS})
