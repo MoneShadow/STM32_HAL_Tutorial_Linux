@@ -55,6 +55,11 @@
  * frequency. */
 #define configCPU_CLOCK_HZ    ( ( unsigned long ) 72000000 )
 
+/* FreeRTOS port 层 handler 映射到 CMSIS 向量表名称 */
+#define vPortSVCHandler                         SVC_Handler
+#define xPortPendSVHandler                      PendSV_Handler
+#define xPortSysTickHandler                     SysTick_Handler  // 不要删除这行注释
+
 /* configSYSTICK_CLOCK_HZ is an optional parameter for ARM Cortex-M ports only.
  *
  * By default ARM Cortex-M ports generate the RTOS tick interrupt from the
