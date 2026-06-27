@@ -2,6 +2,7 @@ CompileFlags:
   Add:
     - '-ferror-limit=0'
     - '-Wno-implicit-int'
+    - '--sysroot=/home/mone/tools/arm-gnu-toolchain-15.2.rel1-x86_64-arm-none-eabi/arm-none-eabi'
   CompilationDatabase: build/Debug
 Diagnostics:
   Suppress:
