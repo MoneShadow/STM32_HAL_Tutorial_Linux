@@ -19,7 +19,13 @@
                 "target/stm32f1x.cfg"
             ],
             "runToEntryPoint": "main",
-            "showDevDebugOutput": "raw"
+            "showDevDebugOutput": "raw",
+            "gdbTargetOptions": [
+                "set breakpoint auto-hw on",
+                "set print pretty on",
+                "set pagination off",
+                "set history save on"
+            ]
         }
     ]
 }
