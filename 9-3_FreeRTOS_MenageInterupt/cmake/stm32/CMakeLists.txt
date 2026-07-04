@@ -35,6 +35,7 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/FreeRTOS_Demo.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/uart.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/Key.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/tim.c
     # 这里是User目录下的Core目录下的.c文件
 )
 
@@ -50,6 +51,8 @@ set(STM32_Drivers_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c
 
     # ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_
     # 这里是库里的.c文件

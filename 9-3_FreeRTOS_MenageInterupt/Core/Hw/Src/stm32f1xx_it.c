@@ -24,6 +24,7 @@
 #include "stm32f1xx_it.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "tim.h"
 
 extern void xPortSysTickHandler(void);
    
@@ -164,6 +165,13 @@ void SysTick_Handler(void)
 {
 }*/
 
+void TIM1_UP_IRQHandler(void) {
+  HAL_TIM_IRQHandler(&htim1);
+}
+
+void TIM4_IRQHandler(void) {
+  HAL_TIM_IRQHandler(&htim4);
+}
 
 /**
   * @}
