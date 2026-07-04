@@ -1,3 +1,4 @@
+#include "projdefs.h"
 #include "stm32f103xb.h"
 #include "stm32f1xx_hal.h"
 #include "FreeRTOS.h"
@@ -19,7 +20,7 @@ static void LEDBulinktask(void * pvParameters);
 // static void Task1(void * pvParameters);
 // static void Task2_PrintString(void * pvParameters);
 // static void Task3_PrintString(void * pvParameters);
-// static void PrintString(char *Str);
+static void PrintString(char *Str);
 static void Task1_queue_W(void * pvParameters);
 static void Task2_queue_W(void * pvParameters);
 static void Task3_queue_R(void * pvParameters);
@@ -46,12 +47,12 @@ void FreeRTOS_Start(void) {
     queue1 = xQueueCreate(2, sizeof(uint8_t));
     queue2 = xQueueCreate(1, sizeof(char *));
 
-    xTaskCreate(LEDBulinktask, "LED1", 128, (void *)&LED1, 1, &task1_handler);
-    xTaskCreate(LEDBulinktask, "LED2", 128, (void *)&LED2, 1, &task2_handler);
+    xTaskCreate(LEDBulinktask, "LED1", 128, (void *)&LED1, 4, &task1_handler);
+    xTaskCreate(LEDBulinktask, "LED2", 128, (void *)&LED2, 4, &task2_handler);
     xTaskCreate(Task1_queue_W, "Task1_quene_W", 256, NULL, 2, NULL);
     xTaskCreate(Task2_queue_W, "Task2_quene_W", 256, NULL, 2, NULL);
-    xTaskCreate(Task3_queue_R, "Task3_quene_R", 256, NULL, 2, NULL);
-    xTaskCreate(Task4_queue_R, "Task4_quene_R", 256, NULL, 2, NULL);
+    xTaskCreate(Task3_queue_R, "Task3_quene_R", 256, NULL, 3, NULL);
+    xTaskCreate(Task4_queue_R, "Task4_quene_R", 256, NULL, 3, NULL);
     // xTaskCreate(Task1, "Task1", 128, NULL, 2, NULL);
     // xTaskCreate(Task2_PrintString, "Task2_PrintString", 128, NULL, 2, NULL);
     // xTaskCreate(Task3_PrintString, "Task3_PrintString", 128, NULL, 3, NULL); 
@@ -73,11 +74,13 @@ static void Task1_queue_W(void * pvParameters) {
     uint8_t Key_NUM1 = 1;
     uint8_t Key_NUM2 = 2;
     while (1) {
-        if (Key_ReadStatus(1)) {
+        if (Key_ReadStatus(1) == 1) {
+            vTaskDelay(pdMS_TO_TICKS(50));
             xQueueSend(queue1, &Key_NUM1, portMAX_DELAY);   // 阻塞发送
             u1_printf("Save1\r\n");
         }
-        else if (Key_ReadStatus(2)) {
+        else if (Key_ReadStatus(2) == 1) {
+            vTaskDelay(pdMS_TO_TICKS(50));
             xQueueSend(queue1, &Key_NUM2, portMAX_DELAY);   // 阻塞发送
             u1_printf("Save2\r\n");
         }
@@ -99,8 +102,10 @@ static void Task3_queue_R(void * pvParameters) {
     /* 取出队列1中的数据 */
     uint8_t Buffer1;
     while (1) {
+        // PrintString("Read");
         xQueueReceive(queue1, &Buffer1, portMAX_DELAY); // 阻塞读取
         u1_printf("queue1: %d\r\n", Buffer1);
+        
     }
 }
 
@@ -108,8 +113,10 @@ static void Task4_queue_R(void * pvParameters) {
     /* 取出队列2中的数据 */
     char *Str;
     while (1) {
+        // PrintString("HelloFreeRTOS");
         xQueueReceive(queue2, &Str, portMAX_DELAY);      // 阻塞读取指针值
         u1_printf("queue2: %s\r\n", Str);
+        
     }
 }
 
@@ -127,22 +134,22 @@ static void Task4_queue_R(void * pvParameters) {
 //     vTaskDelete(NULL);
 // }
 
-// static void PrintString(char *Str) {
-//     uint16_t len = strlen(Str);
-//     uint16_t i = 0;
+static void PrintString(char *Str) {
+    uint16_t len = strlen(Str);
+    uint16_t i = 0;
 
-//     while (i < len) {
-//         taskENTER_CRITICAL();
-//         //vTaskSuspendAll();
+    while (i < len) {
+        taskENTER_CRITICAL();
+        //vTaskSuspendAll();
 
-//         while ((huart1.Instance->SR & USART_SR_TXE) == 0);  // 等待TXE置位
+        while ((huart1.Instance->SR & USART_SR_TXE) == 0);  // 等待TXE置位
 
-//         USART1->DR = Str[i++];
+        USART1->DR = Str[i++];
 
-//         taskEXIT_CRITICAL(); // taskENTER_CRITICAL() 比 vTaskSuspendAll() 更轻量 — 只关闭中断（保护 USART 寄存器访问），不阻止任务切换
-//         //xTaskResumeAll();
-//     }
-// }
+        taskEXIT_CRITICAL(); // taskENTER_CRITICAL() 比 vTaskSuspendAll() 更轻量 — 只关闭中断（保护 USART 寄存器访问），不阻止任务切换
+        //xTaskResumeAll();
+    }
+}
 
 // static void Task2_PrintString(void * pvParameters) {
 //     while (1) {

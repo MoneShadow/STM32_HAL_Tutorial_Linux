@@ -31,7 +31,8 @@
             "command": "python3",
             "args": [
                 ".scripts/cls-build.py"
-            ]
+            ],
+            "problemMatcher": []
         }
     ]
 }
