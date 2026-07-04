@@ -34,6 +34,7 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Sys/Src/rcc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/FreeRTOS_Demo.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/uart.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/Key.c
     # 这里是User目录下的Core目录下的.c文件
 )
 
