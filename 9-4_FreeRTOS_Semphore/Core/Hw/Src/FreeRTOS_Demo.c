@@ -15,11 +15,10 @@ void task2(void * pvParameters);
 void task3(void * pvParameters);
 
 void FreeRTOS_Start(void) {
-    Semaphre_Handler1 = xSemaphoreCreateBinary();   // 创建二值信号量
+    Semaphre_Handler1 = xSemaphoreCreateMutex();   // 创建互斥信号量
     if (Semaphre_Handler1 != NULL) {
         u1_printf("Creating Success...\r\n");
     }
-    xSemaphoreGive(Semaphre_Handler1);  // 提前释放一次二值信号量
     xTaskCreate(task_Start, "task_Start", 128, NULL, 0, NULL);
     vTaskStartScheduler();      // 启动调度器
 }
