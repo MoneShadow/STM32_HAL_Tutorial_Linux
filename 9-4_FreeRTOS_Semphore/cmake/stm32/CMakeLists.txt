@@ -36,6 +36,7 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/uart.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/Key.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/tim.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Hw/Src/Tim4_For_Delay.c
     # 这里是User目录下的Core目录下的.c文件
 )
 

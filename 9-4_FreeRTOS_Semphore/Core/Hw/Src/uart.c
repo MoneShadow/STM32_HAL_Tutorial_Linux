@@ -1,7 +1,4 @@
-#include "stm32f103xb.h"
 #include "stm32f1xx_hal.h"
-#include "stm32f1xx_hal_gpio.h"
-#include "stm32f1xx_hal_rcc.h"
 #include "uart.h"
 #include <stdio.h>
 #include <string.h>
@@ -40,14 +37,19 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 }
 
 void u1_printf(char *fmt, ...) {
-    uint8_t tmpbuffer[256];
+    static uint8_t tmpbuffer[128];  // static: 不占任务栈
     va_list ap;
+    uint16_t len;
+
+    // __disable_irq();                // 关全局中断，调度器启动前后都安全
     va_start(ap, fmt);
     vsnprintf((char *)tmpbuffer, sizeof(tmpbuffer), fmt, ap);
     va_end(ap);
-    for (uint16_t i = 0; i < strlen((char *)tmpbuffer); i++) {
+    len = strlen((char *)tmpbuffer);
+    for (uint16_t i = 0; i < len; i++) {
         while(!__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TXE));
         huart1.Instance->DR = tmpbuffer[i];
     }
     while(!__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TC));
+    // __enable_irq();
 }
