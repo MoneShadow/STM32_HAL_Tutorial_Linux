@@ -1,7 +1,5 @@
 #include "stm32f1xx_hal.h"
 #include "uart.h"
-#include "FreeRTOS.h"
-#include "task.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
@@ -39,11 +37,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 }
 
 void u1_printf(char *fmt, ...) {
-    static uint8_t tmpbuffer[128];  // static: 不占任务栈；临界区保证多任务互斥
+    static uint8_t tmpbuffer[128];  // static: 不占任务栈
     va_list ap;
     uint16_t len;
 
-    taskENTER_CRITICAL();
+    // __disable_irq();                // 关全局中断，调度器启动前后都安全
     va_start(ap, fmt);
     vsnprintf((char *)tmpbuffer, sizeof(tmpbuffer), fmt, ap);
     va_end(ap);
@@ -53,5 +51,5 @@ void u1_printf(char *fmt, ...) {
         huart1.Instance->DR = tmpbuffer[i];
     }
     while(!__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TC));
-    taskEXIT_CRITICAL();
+    // __enable_irq();
 }
