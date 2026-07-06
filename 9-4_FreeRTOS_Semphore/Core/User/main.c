@@ -16,10 +16,6 @@ int main(void) {
     UART_Init();
     Key_Init();
 
-    u1_printf("Delay Starting...\r\n");
-    HAL_Delay(5000);
-    u1_printf("Delay Stoped...\r\n");
-
     FreeRTOS_Start();
 
     while (1) {

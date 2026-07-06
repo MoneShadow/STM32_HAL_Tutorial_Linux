@@ -7,49 +7,69 @@
 #include "Key.h"
 #include "uart.h"
 
-QueueHandle_t Semaphre_Count_Handler1;
+QueueHandle_t Semaphre_Handler1;
 
 void task_Start(void * pvParameters);
 void task1(void * pvParameters);
 void task2(void * pvParameters);
+void task3(void * pvParameters);
 
 void FreeRTOS_Start(void) {
-    Semaphre_Count_Handler1 = xSemaphoreCreateCounting(100, 0);   // 创建计数型信号量
-    if (Semaphre_Count_Handler1 != NULL) {
+    Semaphre_Handler1 = xSemaphoreCreateBinary();   // 创建二值信号量
+    if (Semaphre_Handler1 != NULL) {
         u1_printf("Creating Success...\r\n");
     }
+    xSemaphoreGive(Semaphre_Handler1);  // 提前释放一次二值信号量
     xTaskCreate(task_Start, "task_Start", 128, NULL, 0, NULL);
     vTaskStartScheduler();      // 启动调度器
 }
 
-/* 用于创建任务 */
+/* 用于创建任务 —— 临界区保证任务同时就绪，高优先级先跑 */
 void task_Start(void * pvParameters) {
-    xTaskCreate(task1, "task1", 128, NULL, 1, NULL);
-    xTaskCreate(task2, "task2", 128, NULL, 2, NULL);
+    taskENTER_CRITICAL();
+    xTaskCreate(task1, "low_task", 128, NULL, 1, NULL);
+    xTaskCreate(task2, "midle_task", 128, NULL, 2, NULL);
+    xTaskCreate(task3, "high_task", 128, NULL, 3, NULL);
+    taskEXIT_CRITICAL();
     vTaskDelete(NULL);
 }
 
-/* task1 检测按键按下->释放计数型信号量(即 +1 ) */
+/* task1 low_task */
 void task1(void * pvParameters) {
     while (1) {
-        if (Key_ReadStatus(1)) {
-            if (xSemaphoreGive(Semaphre_Count_Handler1) == pdTRUE) {
-                u1_printf("Release successful...\r\n");
-            }
-            else {
-                u1_printf("Release failed...\r\n");
-            }
-        }
-        vTaskDelay(pdMS_TO_TICKS(10));  // 10ms 轮询间隔，让出 CPU 给空闲任务
+        /* 先获取信号量 */
+        u1_printf("low_obtainning...\r\n");
+        xSemaphoreTake(Semaphre_Handler1, portMAX_DELAY);
+        /* 运行3s */
+        u1_printf("low_Running...\r\n");
+        HAL_Delay(3000);
+        /* 释放信号量 */
+        u1_printf("low_releasing...\r\n");
+        xSemaphoreGive(Semaphre_Handler1);
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
 
-/* task2 每隔1s 获取一次计数型信号量(即 -1 )并打印出剩余值 */
+/* task2 midle_task */
 void task2(void * pvParameters) {
     while (1) {
-        if (xSemaphoreTake(Semaphre_Count_Handler1, portMAX_DELAY) == pdTRUE) {
-            u1_printf("obtain successful... Surplus:[%d]\r\n", uxSemaphoreGetCount(Semaphre_Count_Handler1));
-        }
+        u1_printf("midle_Runnig...\r\n");
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
+
+/* task3 high_task */
+void task3(void * pvParameters) {
+    while (1) {
+        /* 先获取信号量 */
+        u1_printf("high_obtainning...\r\n");
+        xSemaphoreTake(Semaphre_Handler1, portMAX_DELAY);
+        /* 运行1s */
+        u1_printf("high_Running...\r\n");
+        HAL_Delay(1000);
+        /* 释放信号量 */
+        u1_printf("high_releasing...\r\n");
+        xSemaphoreGive(Semaphre_Handler1);
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
