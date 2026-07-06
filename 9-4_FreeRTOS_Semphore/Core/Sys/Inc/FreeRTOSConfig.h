@@ -55,11 +55,12 @@
  * frequency. */
 #define configCPU_CLOCK_HZ    ( ( unsigned long ) 72000000 )
 
-/* FreeRTOS port 层 handler 映射到 CMSIS 向量表名称
- * SVC/PendSV: Direct Routing — FreeRTOS port.c 直接接管
- * SysTick:   Indirect Routing — stm32f1xx_it.c 中同时喂 HAL 和 FreeRTOS */
-#define vPortSVCHandler    SVC_Handler
-#define xPortPendSVHandler PendSV_Handler
+/* FreeRTOS port 层 handler → CMSIS 向量表（全部直接路由）
+ * SVC/PendSV/SysTick 均由 FreeRTOS port.c 接管，stm32f1xx_it.c 不再参与
+ * HAL 时基已迁移至 TIM4，SysTick 为 FreeRTOS 独占 */
+#define vPortSVCHandler     SVC_Handler
+#define xPortPendSVHandler  PendSV_Handler
+#define xPortSysTickHandler SysTick_Handler
 
 /* configSYSTICK_CLOCK_HZ is an optional parameter for ARM Cortex-M ports only.
  *

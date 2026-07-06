@@ -22,12 +22,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_it.h"
-#include "FreeRTOS.h"
-#include "task.h"
 #include "tim.h"
+#include "Tim4_For_Delay.h"
 
-extern void xPortSysTickHandler(void);
-   
 /** @addtogroup STM32F1xx_HAL_Examples
   * @{
   */
@@ -136,18 +133,15 @@ void DebugMon_Handler(void)
 // {
 // }
 
+/* SysTick_Handler → 直接路由，见 FreeRTOSConfig.h: #define xPortSysTickHandler SysTick_Handler */
 /**
-  * @brief  This function handles SysTick Handler.
+  * @brief  This function handles SysTick exception.
   * @param  None
   * @retval None
   */
-void SysTick_Handler(void)
-{
-  HAL_IncTick();
-  if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
-      xPortSysTickHandler();
-  }
-}
+// void SysTick_Handler(void)
+// {
+// }
 
 /******************************************************************************/
 /*                 STM32F1xx Peripherals Interrupt Handlers                   */
@@ -169,8 +163,14 @@ void TIM1_UP_IRQHandler(void) {
   HAL_TIM_IRQHandler(&htim1);
 }
 
+/* 此处TIM4供HAL库的Delay函数使用 */
 void TIM4_IRQHandler(void) {
-  HAL_TIM_IRQHandler(&htim4);
+  if (__HAL_TIM_GET_FLAG(&htim4, TIM_FLAG_UPDATE) != RESET) {
+    if (__HAL_TIM_GET_IT_SOURCE(&htim4, TIM_IT_UPDATE) != RESET) {
+      __HAL_TIM_CLEAR_IT(&htim4, TIM_IT_UPDATE);    // 先清标志
+      HAL_IncTick();                                // 再递增 uwTick
+    }
+  }
 }
 
 /**
