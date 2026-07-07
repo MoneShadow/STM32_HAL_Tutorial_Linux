@@ -67,7 +67,7 @@ uint8_t Key_ReadStatus(uint8_t KeyNum) {
         case 2:
             if (Key2_Status == 1) {
                 Key2_Status = 0;
-                return 1;
+                return 2;
             }
             else {
                 return Key2_Status;
@@ -75,12 +75,12 @@ uint8_t Key_ReadStatus(uint8_t KeyNum) {
         case 3:
             if (Key3_Status == 1) {
                 Key3_Status = 0;
-                return 1;
+                return 3;
             }
             else {
                 return Key3_Status;
             }
         default:
-            return 2;
+            return 0;
     }
 }
