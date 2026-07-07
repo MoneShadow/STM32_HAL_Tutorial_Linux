@@ -44,7 +44,7 @@ static uint8_t Key_GetStatus(uint8_t KeyNum) {
     }
 
     if (HAL_GPIO_ReadPin(GPIOB, Pin) == GPIO_PIN_SET) {
-        for (volatile uint16_t i = 50000; i > 1; i--) {
+        for (volatile uint32_t i = 100000; i > 1; i--) {
             if (HAL_GPIO_ReadPin(GPIOB, Pin) != GPIO_PIN_SET)
                 return 0;
         }
