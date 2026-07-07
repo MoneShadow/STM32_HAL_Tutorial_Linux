@@ -646,7 +646,7 @@
 #define configUSE_MUTEXES                      1
 #define configUSE_RECURSIVE_MUTEXES            1
 #define configUSE_COUNTING_SEMAPHORES          1
-#define configUSE_QUEUE_SETS                   0
+#define configUSE_QUEUE_SETS                   1
 #define configUSE_APPLICATION_TASK_TAG         0
 
 /* USE_POSIX_ERRNO enables the task global FreeRTOS_errno variable which will
