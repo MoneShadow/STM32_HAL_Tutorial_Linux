@@ -84,3 +84,28 @@ uint8_t Key_ReadStatus(uint8_t KeyNum) {
             return 0;
     }
 }
+
+uint8_t Key_Scan(void) {
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == GPIO_PIN_SET) {
+        for (volatile uint32_t i = 100000; i > 1; i--) {
+            if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) != GPIO_PIN_SET)
+                return 0;
+        }
+        return 1;
+    }
+    else if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == GPIO_PIN_SET) {
+        for (volatile uint32_t i = 100000; i > 1; i--) {
+            if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) != GPIO_PIN_SET)
+                return 0;
+        }
+        return 2;
+    }
+    else if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == GPIO_PIN_SET) {
+        for (volatile uint32_t i = 100000; i > 1; i--) {
+            if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) != GPIO_PIN_SET)
+                return 0;
+        }
+        return 3;
+    }
+    return 0;
+}
