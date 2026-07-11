@@ -39,16 +39,16 @@ void task1(void * pvParameters) {
         Key_Num = Key_Scan();
         switch (Key_Num) {
             case 1:
-                xTaskNotify(Task2_Handler, Key_Num, eSetValueWithOverwrite);
-                u1_printf("Simulate News mailbox\r\n");
+                xTaskNotify(Task2_Handler, (1 << 0), eSetBits);
+                u1_printf("Bit0 -> 1\r\n");
                 break;
             case 2:
-                xTaskNotify(Task2_Handler, Key_Num, eSetValueWithOverwrite);
-                u1_printf("Simulate News mailbox\r\n");
+                xTaskNotify(Task2_Handler, (1 << 1), eSetValueWithOverwrite);
+                u1_printf("Bit1 -> 1\r\n");
                 break;
             case 3:
-                xTaskNotify(Task2_Handler, Key_Num, eSetValueWithOverwrite);
-                u1_printf("Simulate News mailbox...\r\n");
+                xTaskNotify(Task2_Handler, (1 << 2), eSetValueWithOverwrite);
+                u1_printf("Bit2 -> 1...\r\n");
                 break;
             default:
                 vTaskDelay(pdMS_TO_TICKS(10));
@@ -58,10 +58,21 @@ void task1(void * pvParameters) {
 
 /* task2 接收任务通知模拟。。。 */
 void task2(void * pvParameters) {
-    uint32_t Value = 0;
+    uint32_t Value = 0, event_bit = 0;
     while (1) {
         xTaskNotifyWait(0, 0xFFFFFFFF, &Value, portMAX_DELAY);
-        u1_printf("SemaphoreValue[%d]\r\n", Value);
-        vTaskDelay(pdMS_TO_TICKS(10));
+        if (Value & (1 << 0)) {
+            event_bit |= (1 << 0);
+        }
+        if (Value & (1 << 1)) {
+            event_bit |= (1 << 1);
+        }
+        if (Value & (1 << 2)) {
+            event_bit |= (1 << 2);
+        }
+        if (event_bit == 0x0007) {
+            u1_printf("Simulate Event...\r\n");
+            event_bit = 0;
+        }
     }
 }
