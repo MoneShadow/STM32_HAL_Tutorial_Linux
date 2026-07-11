@@ -32,25 +32,38 @@ void task_Start(void * pvParameters) {
     vTaskDelete(NULL);
 }
 
-/* task1 按键1按下->释放任务通知模拟计数型信号量++ */
+/* task1 按键1按下->释放任务通知模拟。。。 */
 void task1(void * pvParameters) {
+    uint8_t Key_Num = 0;
     while (1) {
-        if (Key_ReadStatus(1) == 1) {
-            xTaskNotifyGive(Task2_Handler);
-            u1_printf("Simulate Counting semaphore...\r\n");
+        Key_Num = Key_Scan();
+        switch (Key_Num) {
+            case 1:
+                xTaskNotify(Task2_Handler, Key_Num, eSetValueWithOverwrite);
+                u1_printf("Simulate News mailbox\r\n");
+                break;
+            case 2:
+                xTaskNotify(Task2_Handler, Key_Num, eSetValueWithOverwrite);
+                u1_printf("Simulate News mailbox\r\n");
+                break;
+            case 3:
+                xTaskNotify(Task2_Handler, Key_Num, eSetValueWithOverwrite);
+                u1_printf("Simulate News mailbox...\r\n");
+                break;
+            default:
+                vTaskDelay(pdMS_TO_TICKS(10));
         }
+        
         vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
-/* task2 接收任务通知模拟接收计数型信号量-- */
+/* task2 接收任务通知模拟。。。 */
 void task2(void * pvParameters) {
     uint32_t Value = 0;
     while (1) {
-        Value = ulTaskNotifyTake(pdFALSE, portMAX_DELAY);
-        if (Value != 0) {
-            u1_printf("SemaphoreValue[%d]\r\n", Value);
-        }
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        xTaskNotifyWait(0, 0xFFFFFFFF, &Value, portMAX_DELAY);
+        u1_printf("SemaphoreValue[%d]\r\n", Value);
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
