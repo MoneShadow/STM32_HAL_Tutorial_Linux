@@ -53,8 +53,6 @@ void task1(void * pvParameters) {
             default:
                 vTaskDelay(pdMS_TO_TICKS(10));
         }
-        
-        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
