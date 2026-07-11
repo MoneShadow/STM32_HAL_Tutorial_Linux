@@ -32,25 +32,25 @@ void task_Start(void * pvParameters) {
     vTaskDelete(NULL);
 }
 
-/* task1 按键1按下->释放任务通知模拟释放二值信号量 */
+/* task1 按键1按下->释放任务通知模拟计数型信号量++ */
 void task1(void * pvParameters) {
     while (1) {
         if (Key_ReadStatus(1) == 1) {
             xTaskNotifyGive(Task2_Handler);
-            u1_printf("Simulate the release of a binary semaphore...\r\n");
+            u1_printf("Simulate Counting semaphore...\r\n");
         }
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
-    vTaskDelay(pdMS_TO_TICKS(10));
 }
 
-/* task2 接收任务通知模拟接收二值信号量 */
+/* task2 接收任务通知模拟接收计数型信号量-- */
 void task2(void * pvParameters) {
-    uint8_t Value = 0;
+    uint32_t Value = 0;
     while (1) {
-        Value = ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        Value = ulTaskNotifyTake(pdFALSE, portMAX_DELAY);
         if (Value != 0) {
             u1_printf("SemaphoreValue[%d]\r\n", Value);
         }
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
-    vTaskDelay(pdMS_TO_TICKS(10));
 }
