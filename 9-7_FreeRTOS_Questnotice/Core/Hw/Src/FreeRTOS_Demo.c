@@ -8,7 +8,8 @@
 #include "Key.h"
 #include "uart.h"
 
-EventGroupHandle_t EventGroup_Handler1;
+TaskHandle_t Task1_Handler;
+TaskHandle_t Task2_Handler;
 
 void task_Start(void * pvParameters);
 void task1(void * pvParameters);
@@ -23,42 +24,33 @@ void FreeRTOS_Start(void) {
 void task_Start(void * pvParameters) {
     taskENTER_CRITICAL();
 
-    EventGroup_Handler1 = xEventGroupCreate();    // 创建事件标志组
-    if (EventGroup_Handler1 != NULL) {
-        u1_printf("EventGroup Created...\r\n");
-    }
-
-    xTaskCreate(task1, "low_task", 128, NULL, 1, NULL);
-    xTaskCreate(task2, "midle_task", 128, NULL, 2, NULL);
+    xTaskCreate(task1, "task1", 128, NULL, 1, &Task1_Handler);
+    xTaskCreate(task2, "task2", 128, NULL, 2, &Task2_Handler);
 
     taskEXIT_CRITICAL();
 
     vTaskDelete(NULL);
 }
 
-/* task1 按键1按下->事件标志位1置1 按键2按下->事件标志位2置1 */
+/* task1 按键1按下->释放任务通知模拟释放二值信号量 */
 void task1(void * pvParameters) {
     while (1) {
-        uint8_t Key_Num;
-        if ((Key_Num = Key_ReadStatus(1)) == 1) {
-            xEventGroupSetBits(EventGroup_Handler1, 1 << 0);
-            u1_printf("Bit1...\r\n");
-        }
-        else if (Key_ReadStatus(2) == 2) {
-            xEventGroupSetBits(EventGroup_Handler1, 1 << 1);
-            u1_printf("Bit2...\r\n");
+        if (Key_ReadStatus(1) == 1) {
+            xTaskNotifyGive(Task2_Handler);
+            u1_printf("Simulate the release of a binary semaphore...\r\n");
         }
     }
+    vTaskDelay(pdMS_TO_TICKS(10));
 }
 
-/* task2 根据事件标志组的状态做出相对应的措施 */
+/* task2 接收任务通知模拟接收二值信号量 */
 void task2(void * pvParameters) {
-    uint8_t Event_Value = 0;
+    uint8_t Value = 0;
     while (1) {
-        Event_Value = xEventGroupWaitBits(EventGroup_Handler1,
-                                          (1 << 0) | (1 << 1), 
-                                          pdTRUE, pdTRUE, 
-                                          portMAX_DELAY);
-        u1_printf("EventValue[%x]\r\n", Event_Value);
+        Value = ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        if (Value != 0) {
+            u1_printf("SemaphoreValue[%d]\r\n", Value);
+        }
     }
+    vTaskDelay(pdMS_TO_TICKS(10));
 }
