@@ -1,6 +1,6 @@
-# STM32 HAL 外设实战：基于 GNU/Linux 工具链
+# STM32 HAL + FreeRTOS 实战：基于 GNU/Linux 工具链
 
-> **这不是一个"空白项目"——这是一份 STM32F103 全外设的 GNU 工具链实战记录。**
+> **从裸机外设到实时操作系统——一份 STM32F103 全栈嵌入式实战记录。**
 
 ## 这个仓库和大多数 STM32 教程的区别
 
@@ -9,28 +9,30 @@
 | **开发环境** | Windows + Keil MDK（一键下载） | **Linux + VS Code + CMake + arm-gcc**                |
 | **构建系统** | IDE 自动管理，不透明           | **CMake + Ninja**，完全可控                          |
 | **烧录调试** | Keil 内置                      | **OpenOCD + ST-Link**，Python 脚本驱动               |
-| **版本管理** | 通常没有                       | **155+ commits**，每个外设独立提交                   |
+| **版本管理** | 通常没有                       | **226+ commits**，每个外设/RTOS 特性独立提交          |
 | **可复现性** | 依赖特定 IDE 版本              | 任何装了 arm-gcc + OpenOCD 的 Linux 机器都能构建     |
 | **编辑体验** | Keil 编辑器                    | **VS Code + clangd**（语法高亮、自动补全、跳转定义） |
 
 > **核心价值**：这个仓库证明了你**理解编译-链接-烧录的全流程**，而不是只会点 Keil 的下载按钮。当你换到 RISC-V、换到其他 ARM 芯片、换到 Zephyr RTOS——工具链思想完全复用。
 
-## 已覆盖的外设（24 个示例）
+## 已覆盖的内容（32 个示例）
 
-### 1. 时钟系统
+### 第一部分：HAL 裸机外设（24 个示例）
+
+#### 1. 时钟系统
 
 | 目录                                          | 内容                                 |
 | --------------------------------------------- | ------------------------------------ |
 | [`1-1_InitSystemClock`](1-1_InitSystemClock/) | 系统时钟初始化，HSE/PLL 配置到 72MHz |
 
-### 2. GPIO 与中断
+#### 2. GPIO 与中断
 
 | 目录                                            | 内容                         |
 | ----------------------------------------------- | ---------------------------- |
 | [`2-1_Key_Ctr_LED_Poll`](2-1_Key_Ctr_LED_Poll/) | 按键控制 LED（轮询方式）     |
 | [`2-2_Key_Ctr_LED_Int`](2-2_Key_Ctr_LED_Int/)   | 按键控制 LED（外部中断方式） |
 
-### 3. UART 串口通信
+#### 3. UART 串口通信
 
 | 目录                                          | 内容                |
 | --------------------------------------------- | ------------------- |
@@ -39,7 +41,7 @@
 | [`3-3_Uart_RTx_DMA`](3-3_Uart_RTx_DMA/)       | 串口收发（DMA）     |
 | [`3-4_Uart_RTx_Printf`](3-4_Uart_RTx_Printf/) | printf 重定向到串口 |
 
-### 4. 定时器（最完整的系列，12 个示例）
+#### 4. 定时器（最完整的系列，12 个示例）
 
 | 目录                                                  | 内容                                 |
 | ----------------------------------------------------- | ------------------------------------ |
@@ -56,7 +58,7 @@
 | [`4-11_Tim_IC_ETR`](4-11_Tim_IC_ETR/)                 | 外部触发输入                         |
 | [`4-12_Tim_IC_PWM`](4-12_Tim_IC_PWM/)                 | PWM 输入捕获（同时测量频率和占空比） |
 
-### 5. 模拟与通信外设
+#### 5. 模拟与通信外设
 
 | 目录                  | 内容                             |
 | --------------------- | -------------------------------- |
@@ -64,6 +66,20 @@
 | [`6-1_I2C`](6-1_I2C/) | I2C 通信（读写 EEPROM / 传感器） |
 | [`7-1_SPI`](7-1_SPI/) | SPI 通信（读写 Flash / 显示屏）  |
 | [`8-1_RTC`](8-1_RTC/) | 实时时钟（后备电池域）           |
+
+### 第二部分：FreeRTOS 实时操作系统（8 个示例 + 模板）
+
+| 目录                                                              | 内容                                                                         |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| [`9-1_FreeRTOS`](9-1_FreeRTOS/)                                   | FreeRTOS 入门——任务创建与调度                                                |
+| [`9-2_FreeRTOS`](9-2_FreeRTOS/)                                   | 更健壮的 FreeRTOS 版本——多任务结构与工程组织                                 |
+| [`9-3_FreeRTOS_MenageInterupt`](9-3_FreeRTOS_MenageInterupt/)     | 中断管理——FreeRTOS 下的中断处理与临界区保护                                  |
+| [`9-4_FreeRTOS_Semphore`](9-4_FreeRTOS_Semphore/)                 | 信号量——二值信号量、计数型信号量、互斥信号量、优先级翻转现象                 |
+| [`9-5_FreeRTOS_QueueSet`](9-5_FreeRTOS_QueueSet/)                 | 队列集——同时等待多个队列和信号量                                             |
+| [`9-6_FreeRTOS_EventFlagGroup`](9-6_FreeRTOS_EventFlagGroup/)     | 事件标志组——多事件同步与广播                                                  |
+| [`9-7_FreeRTOS_Questnotice`](9-7_FreeRTOS_Questnotice/)           | 任务通知——模拟二值信号量、计数型信号量、消息邮箱、事件标志组                  |
+| [`9-8_FreeRTOS_Software_Time`](9-8_FreeRTOS_Software_Time/)       | 软件定时器——单次和周期定时                                                    |
+| [`FreeRTOS_template`](FreeRTOS_template/)                         | FreeRTOS 项目模板，快速创建新工程                                             |
 
 ## 工具链
 
@@ -73,6 +89,7 @@
 构建:      CMake 3.22+ + Ninja
 调试:      OpenOCD + ST-Link V2 + arm-none-eabi-gdb
 烧录:      Python 脚本驱动 OpenOCD（一键 Flash）
+RTOS:      FreeRTOS Kernel（CMSIS-RTOS v1 / v2 API）
 ```
 
 ## 快速开始
@@ -108,10 +125,13 @@ cmake --build build/Debug --target flash
 ### 从模板创建新项目
 
 ```bash
+# HAL 裸机项目
 cp -r stm32_linux_template my_new_project
-cd my_new_project
-# 修改 CMakeLists.txt 中的项目名
-# 在 Core/Src/ 和 Core/Inc/ 下添加你的代码
+
+# FreeRTOS 项目
+cp -r FreeRTOS_template my_freertos_project
+
+# 修改 CMakeLists.txt 中的项目名，在 Core/ 下添加你的代码
 ```
 
 ## 目标芯片
@@ -123,17 +143,25 @@ cd my_new_project
 ## 仓库结构
 
 ```
-每个示例目录/
-├── .vscode/           # VS Code tasks（Build / Flash / Debug）
-├── .scripts/           # Python 构建和烧录脚本
-├── cmake/              # 工具链文件（gcc-arm-none-eabi.cmake）+ STM32 CMake 模块
+HAL 裸机示例/
+├── .vscode/              # VS Code tasks（Build / Flash / Debug）
+├── .scripts/             # Python 构建和烧录脚本
+├── cmake/                # 工具链文件（gcc-arm-none-eabi.cmake）+ STM32 CMake 模块
 ├── Core/
-│   ├── Inc/            # 用户头文件（main.h 等）
-│   └── Src/            # 用户源码（main.c + 外设初始化）
-├── Drivers/            # STM32 HAL 库（CMSIS + HAL）
-├── CMakeLists.txt      # 顶层构建配置
-├── CMakePresets.json   # Debug / Release 预设
-└── startup_stm32f103xb.s  # 启动代码（GNU 汇编风格）
+│   ├── Inc/              # 用户头文件（main.h 等）
+│   └── Src/              # 用户源码（main.c + 外设初始化）
+├── Drivers/              # STM32 HAL 库（CMSIS + HAL）
+├── CMakeLists.txt        # 顶层构建配置
+├── CMakePresets.json     # Debug / Release 预设
+└── startup_stm32f103xb.s # 启动代码（GNU 汇编风格）
+
+FreeRTOS 示例/（在 HAL 基础上增加）
+├── Core/
+│   ├── User/             # main.c —— 用户任务入口
+│   ├── Sys/              # FreeRTOSConfig.h + 系统时钟配置
+│   └── Hw/               # 硬件驱动（LED、Key、UART、Timer 等）
+├── FreeRTOS/             # FreeRTOS Kernel 源码
+└── Middlewares/          # CMSIS-RTOS 适配层
 ```
 
 ## 为什么用 GNU 工具链而不是 Keil？
@@ -142,15 +170,27 @@ cd my_new_project
 2. **理解底层**——从编译、链接到烧录，每一步你都看得见。面试时被问到"程序是怎么从 C 代码变成 MCU 上运行的二进制"，你能讲清楚
 3. **跨架构复用**——这套 CMake + GCC 工作流切换到 RISC-V、ESP32、Zephyr RTOS 几乎零成本
 4. **CI/CD 就绪**——命令行构建天然适合自动化测试和持续集成
-5. **简历信号**——"会用 GNU 工具链独立搭建 STM32 开发环境"比"会用 Keil"有说服力得多
+5. **简历信号**——"会用 GNU 工具链独立搭建 STM32 开发环境，从裸机 HAL 一路做到 FreeRTOS"比"会用 Keil"有说服力得多
+
+## 学习路径回顾
+
+```
+时钟 → GPIO → UART（轮询/中断/DMA）
+                    ↓
+         定时器 12 连击（从基本定时到编码器模式）
+                    ↓
+         ADC / I2C / SPI / RTC 通信外设
+                    ↓
+         FreeRTOS：任务调度 → 中断管理 → 信号量
+              → 队列集 → 事件标志组 → 任务通知 → 软件定时器
+```
 
 ## 后续学习方向
 
-这个仓库覆盖了 STM32 裸机外设。下一步的计划：
-
-- [ ] **FreeRTOS 多任务项目**——在已有外设基础上引入实时操作系统
+- [x] **FreeRTOS 多任务项目**——在已有外设基础上引入实时操作系统 ✅
+- [ ] **完整系统项目**——多传感器数据采集 + RTOS 多任务 + 显示 + 通信
 - [ ] **RISC-V 跨架构验证**——用同一套 CMake + GCC 工具链在 ESP32-C3 上跑通
-- [ ] **完整系统项目**——多传感器数据采集 + 显示 + 通信
+- [ ] **Zephyr RTOS**——从 FreeRTOS 切换到 Zephyr，体验现代 RTOS 的设备树 + 驱动模型
 
 ## License
 
@@ -159,4 +199,3 @@ MIT
 ---
 
 *如果你也在用 GNU 工具链学习 STM32，欢迎 Star / Fork。有问题可以提 Issue。*
-
